@@ -31,4 +31,4 @@ switch ($orm) {
 
 header('Content-Type: application/json');
 
-echo json_encode($builder->make(true));
+echo json_encode($builder->make());
