@@ -80,7 +80,7 @@ class DoctrineBuilder implements BuilderInterface
 
     /**
      * Sets the query builder.
-     * 
+     *
      * @param \Doctrine\ORM\QueryBuilder $queryBuilder
      */
     public function setQueryBulder(QueryBuilder $queryBuilder)
