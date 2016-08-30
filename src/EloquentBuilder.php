@@ -13,6 +13,11 @@ use Illuminate\Database\Eloquent\Builder;
 class EloquentBuilder implements BuilderInterface
 {
     /**
+     * @var array
+     */
+    protected $get;
+
+    /**
      * @var mixed
      */
     protected $model;

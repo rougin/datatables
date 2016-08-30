@@ -30,7 +30,7 @@ class DoctrineBuilder implements BuilderInterface
     protected $get;
 
     /**
-     * @var \Doctrine\ORM\Query
+     * @var \Doctrine\ORM\QueryBuilder
      */
     protected $query;
 
@@ -93,7 +93,7 @@ class DoctrineBuilder implements BuilderInterface
     /**
      * Returns the generated query.
      *
-     * @param  \Doctrine\ORM\QueryBuilder|null $query
+     * @param  \Doctrine\ORM\QueryBuilder|null $queryBuilder
      * @return array
      */
     protected function getQueryResult(QueryBuilder $queryBuilder = null)
