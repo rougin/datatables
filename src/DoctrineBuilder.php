@@ -12,7 +12,7 @@ use Doctrine\ORM\EntityManager;
  * @package Datatables
  * @author  Rougin Royce Gutib <rougingutib@gmail.com>
  */
-class DoctrineBuilder implements BuilderInterface
+class DoctrineBuilder extends AbstractBuilder implements BuilderInterface
 {
     /**
      * @var \Doctrine\ORM\EntityManager
@@ -59,14 +59,7 @@ class DoctrineBuilder implements BuilderInterface
 
         $count = $this->getTotalRows($this->entityName);
         $data  = $this->getQueryResult($this->query);
-
-        if (! $withKeys) {
-            $valuesOnly = function ($item) {
-                return array_values($item);
-            };
-
-            $data = array_map($valuesOnly, $data);
-        }
+        $data  = $this->removeKeys($data, ! $withKeys);
 
         $response = [
             'draw'            => $draw,
