@@ -3,12 +3,13 @@
 namespace Rougin\Datatables\Example\Models;
 
 /**
+ * @Entity @Table(name="user")
+ *
  * Doctrine Model
  *
  * @package Datatables
  * @author  Rougin Royce Gutib <rougingutib@gmail.com>
  *
- * @Entity @Table(name="user")
  */
 class DoctrineModel
 {

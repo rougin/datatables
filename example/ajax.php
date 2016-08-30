@@ -3,6 +3,9 @@
 use Rougin\Datatables\DoctrineBuilder;
 use Rougin\Datatables\EloquentBuilder;
 
+use Rougin\Datatables\Example\Models\DoctrineModel;
+use Rougin\Datatables\Example\Models\EloquentModel;
+
 require_once __DIR__ . '/../vendor/autoload.php';
 
 $orm = 'doctrine';
@@ -28,4 +31,4 @@ switch ($orm) {
 
 header('Content-Type: application/json');
 
-echo json_encode($builder->make());
+echo json_encode($builder->make(true));
