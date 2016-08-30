@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Builder;
  * @package Datatables
  * @author  Rougin Royce Gutib <rougingutib@gmail.com>
  */
-class EloquentBuilder implements BuilderInterface
+class EloquentBuilder extends AbstractBuilder implements BuilderInterface
 {
     /**
      * @var array
@@ -24,7 +24,7 @@ class EloquentBuilder implements BuilderInterface
 
     /**
      * @param mixed  $model
-     * @param string $get
+     * @param array  $get
      */
     public function __construct($model, $get)
     {
@@ -51,14 +51,7 @@ class EloquentBuilder implements BuilderInterface
 
         $count = $builder->count();
         $data  = $this->getQueryResult($builder);
-
-        if (! $withKeys) {
-            $valuesOnly = function ($item) {
-                return array_values($item);
-            };
-
-            $data = array_map($valuesOnly, $data);
-        }
+        $data  = $this->removeKeys($data, ! $withKeys);
 
         $response = [
             'draw'            => $draw,
