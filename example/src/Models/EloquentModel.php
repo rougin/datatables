@@ -1,5 +1,7 @@
 <?php
 
+namespace Rougin\Datatables\Example\Models;
+
 use Illuminate\Database\Eloquent\Model;
 
 /**

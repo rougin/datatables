@@ -2,12 +2,9 @@
 
 use Rougin\Datatables\DoctrineBuilder;
 use Rougin\Datatables\EloquentBuilder;
-use Rougin\Datatables\Test\User\DoctrineModel;
-use Rougin\Datatables\Test\User\EloquentModel;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-// Choose "doctrine" or "eloquent"
 $orm = 'doctrine';
 
 switch ($orm) {

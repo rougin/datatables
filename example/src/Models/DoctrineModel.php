@@ -1,5 +1,7 @@
 <?php
 
+namespace Rougin\Datatables\Example\Models;
+
 /**
  * Doctrine Model
  *
