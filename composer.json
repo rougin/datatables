@@ -1,0 +1,48 @@
+{
+    "name": "rougin/datatables",
+    "description": "Handles DataTables' server-side processing using Doctrine or Eloquent",
+    "keywords": [
+        "ajax",
+        "datatables",
+        "doctrine",
+        "eloquent",
+        "php"
+    ],
+    "homepage": "https://github.com/rougin/datatables",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Rougin Royce Gutib",
+            "email": "rougingutib@gmail.com",
+            "homepage": "http://rougin.github.io",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0"
+    },
+    "autoload": {
+        "psr-4": {
+        	"Rougin\\Datatables\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Rougin\\Datatables\\Test\\": "tests/"
+        }
+    },
+    "require-dev": {
+        "doctrine/orm": "^2.5",
+        "illuminate/database": "5.1.*",
+        "phpunit/phpunit": "^5.5",
+        "scrutinizer/ocular": "^1.3"
+    },
+    "scripts": {
+        "test": "phpunit"
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "0.2-dev"
+        }
+    }
+}
