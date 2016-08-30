@@ -7,6 +7,7 @@ use Rougin\Datatables\Test\User\EloquentModel;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
+// Choose "doctrine" or "eloquent"
 $orm = 'doctrine';
 
 switch ($orm) {
@@ -18,7 +19,7 @@ switch ($orm) {
         $builder = new DoctrineBuilder($entity, $entityManager, $_GET);
 
         break;
-    default:
+    case 'eloquent':
         require_once __DIR__ . '/src/Bootstrap/Eloquent.php';
         require_once __DIR__ . '/src/Models/EloquentModel.php';
 
@@ -28,10 +29,6 @@ switch ($orm) {
         break;
 }
 
-$response = $builder->make();
-
-// Return as JSON -----------------------
 header('Content-Type: application/json');
 
-echo json_encode($response);
-// --------------------------------------
+echo json_encode($builder->make());
