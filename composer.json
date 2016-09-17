@@ -32,8 +32,6 @@
         }
     },
     "require-dev": {
-        "doctrine/orm": "^2.5",
-        "illuminate/database": "5.1.*",
         "phpunit/phpunit" : "4.*",
         "scrutinizer/ocular": "^1.3"
     },
