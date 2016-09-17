@@ -5,8 +5,6 @@ namespace Rougin\Datatables;
 use Doctrine\ORM\Tools\Setup;
 use Doctrine\ORM\EntityManager;
 
-use Illuminate\Events\Dispatcher;
-use Illuminate\Container\Container;
 use Illuminate\Database\Capsule\Manager;
 
 use Rougin\Datatables\DoctrineBuilder;
@@ -92,23 +90,16 @@ class DatatablesTest extends PHPUnit_Framework_TestCase
     protected $entityManager;
 
     /**
-     * Bootstraps Doctrine and Eloquent.
-     *
-     * @return void
-     */
-    public function setUp()
-    {
-        $this->setUpDoctrine();
-        $this->setUpEloquent();
-    }
-
-    /**
      * Sets up Doctrine's database configuration.
      *
      * @return void
      */
     protected function setUpDoctrine()
     {
+        if (! class_exists('Doctrine\ORM\Tools\Setup')) {
+            $this->markTestSkipped('Doctrine ORM is not installed');
+        }
+
         // Create a simple "default" Doctrine ORM configuration for Annotations
         $config = Setup::createAnnotationMetadataConfiguration([ __DIR__ ], true);
 
@@ -128,6 +119,10 @@ class DatatablesTest extends PHPUnit_Framework_TestCase
      */
     protected function setUpEloquent()
     {
+        if (! class_exists('Illuminate\Database\Capsule\Manager')) {
+            $this->markTestSkipped('Illuminate\Database is not installed');
+        }
+
         $capsule = new Manager;
 
         $capsule->addConnection([
@@ -147,6 +142,8 @@ class DatatablesTest extends PHPUnit_Framework_TestCase
      */
     public function testDoctrineBuilderWithModelName()
     {
+        $this->setUpDoctrine();
+
         $entity   = DoctrineModel::class;
         $builder  = new DoctrineBuilder($entity, $this->entityManager, $this->get);
         $response = $builder->make();
@@ -161,6 +158,8 @@ class DatatablesTest extends PHPUnit_Framework_TestCase
      */
     public function testEloquentBuilderWithModelName()
     {
+        $this->setUpEloquent();
+
         $model    = EloquentModel::class;
         $builder  = new EloquentBuilder($model, $this->get);
         $response = $builder->make();
@@ -175,6 +174,8 @@ class DatatablesTest extends PHPUnit_Framework_TestCase
      */
     public function testDoctrineBuilderWithQueryBuilder()
     {
+        $this->setUpDoctrine();
+
         $entity  = DoctrineModel::class;
         $builder = new DoctrineBuilder($entity, $this->entityManager, $this->get);
 
@@ -195,6 +196,8 @@ class DatatablesTest extends PHPUnit_Framework_TestCase
      */
     public function testEloquentBuilderWithQueryBuilder()
     {
+        $this->setUpEloquent();
+
         $builder  = new EloquentBuilder(EloquentModel::query(), $this->get);
         $response = $builder->make();
 
