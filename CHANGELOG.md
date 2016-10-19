@@ -1,8 +1,8 @@
 # Changelog
 
-All Notable changes to `Datatables` will be documented in this file
+All notable changes to `Datatables` will be documented in this file
 
-## [Unreleased](https://github.com/rougin/datatables/compare/v0.1.1...HEAD) - [CURRENT_DATE]
+## [0.2.0](https://github.com/rougin/datatables/compare/v0.1.1...v0.2.0) - 2016-10-20
 
 ### Removed
 - Third-party dependencies
