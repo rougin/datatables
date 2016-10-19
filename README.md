@@ -24,7 +24,7 @@ $ composer require rougin/datatables
 [example/ajax.php](example/ajax.php)
 
 ``` php
-$entity  = Rougin\Datatables\Test\User\DoctrineModel::class;
+$entity  = 'Rougin\Datatables\Example\Models\DoctrineModel';
 $builder = new Rougin\Datatables\DoctrineBuilder($entity, $entityManager, $_GET);
 
 header('Content-Type: application/json');
@@ -37,7 +37,7 @@ echo json_encode($builder->make());
 [example/ajax.php](example/ajax.php)
 
 ``` php
-$model   = Rougin\Datatables\Test\User\EloquentModel::class;
+$model   = 'Rougin\Datatables\Example\Models\EloquentModel';
 $builder = new Rougin\Datatables\EloquentBuilder($model, $_GET);
 
 header('Content-Type: application/json');
