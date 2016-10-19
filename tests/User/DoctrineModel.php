@@ -1,6 +1,6 @@
 <?php
 
-namespace Rougin\Datatables\Test\User;
+namespace Rougin\Datatables\User;
 
 /**
  * Doctrine Model

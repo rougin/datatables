@@ -15,26 +15,27 @@ class EloquentBuilder extends AbstractBuilder implements BuilderInterface
     /**
      * @var array
      */
-    protected $get;
+    protected $getParameters;
 
     /**
      * @var mixed
      */
-    protected $model;
+    protected $queryBuilder;
 
     /**
-     * @param mixed  $model
+     * @param mixed  $builder
      * @param array  $get
      */
-    public function __construct($model, $get)
+    public function __construct($builder, $get)
     {
-        $this->get   = $get;
-        $this->model = $model;
+        $this->getParameters = $get;
+        $this->queryBuilder  = $builder;
 
-        if (is_string($this->model)) {
-            $model = new $this->model;
+        // If a model's name is injected.
+        if (is_string($builder)) {
+            $model = new $builder;
 
-            $this->model = $model->query();
+            $this->queryBuilder = $model->query();
         }
     }
 
@@ -46,22 +47,11 @@ class EloquentBuilder extends AbstractBuilder implements BuilderInterface
      */
     public function make($withKeys = false)
     {
-        $builder = $this->model;
-        $draw    = $this->get['draw'];
-        $search  = $this->get['search']['value'];
-
-        $count = $builder->count();
-        $data  = $this->getQueryResult($builder, $this->get);
+        $count = $this->queryBuilder->count();
+        $data  = $this->getQueryResult($this->queryBuilder, $this->getParameters);
         $data  = $this->removeKeys($data, ! $withKeys);
 
-        $response = [
-            'draw'            => $draw,
-            'recordsFiltered' => (empty($search)) ? $count : count($data),
-            'recordsTotal'    => $count,
-            'data'            => $data,
-        ];
-
-        return $response;
+        return $this->getResponse($data, $count, $this->getParameters);
     }
 
     /**

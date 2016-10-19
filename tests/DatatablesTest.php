@@ -5,15 +5,13 @@ namespace Rougin\Datatables;
 use Doctrine\ORM\Tools\Setup;
 use Doctrine\ORM\EntityManager;
 
-use Illuminate\Database\Capsule\Manager;
-
 use Rougin\Datatables\DoctrineBuilder;
 use Rougin\Datatables\EloquentBuilder;
 
 use PHPUnit_Framework_TestCase;
 
-use Rougin\Datatables\Test\User\DoctrineModel;
-use Rougin\Datatables\Test\User\EloquentModel;
+use Rougin\Datatables\User\DoctrineModel;
+use Rougin\Datatables\User\EloquentModel;
 
 /**
  * Datatables Test
@@ -123,12 +121,12 @@ class DatatablesTest extends PHPUnit_Framework_TestCase
             $this->markTestSkipped('Illuminate\Database is not installed');
         }
 
-        $capsule = new Manager;
+        $capsule = new \Illuminate\Database\Capsule\Manager;
 
         $capsule->addConnection([
-            'driver'    => 'sqlite',
-            'database'  => __DIR__ . '/Databases/test.sqlite',
-            'prefix'    => '',
+            'driver'   => 'sqlite',
+            'database' => __DIR__ . '/Databases/test.sqlite',
+            'prefix'   => '',
         ]);
 
         $capsule->setAsGlobal();
@@ -146,6 +144,7 @@ class DatatablesTest extends PHPUnit_Framework_TestCase
 
         $entity   = DoctrineModel::class;
         $builder  = new DoctrineBuilder($entity, $this->entityManager, $this->get);
+
         $response = $builder->make();
 
         $this->assertEquals(5, $response['recordsTotal']);

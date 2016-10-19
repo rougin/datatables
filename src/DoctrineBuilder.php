@@ -27,12 +27,12 @@ class DoctrineBuilder extends AbstractBuilder implements BuilderInterface
     /**
      * @var array
      */
-    protected $get;
+    protected $getParameters;
 
     /**
      * @var \Doctrine\ORM\QueryBuilder
      */
-    protected $query;
+    protected $queryBuilder;
 
     /**
      * @param string                      $entityName
@@ -45,8 +45,8 @@ class DoctrineBuilder extends AbstractBuilder implements BuilderInterface
 
         $this->entityManager = $entityManager;
         $this->entityName    = $entityName;
-        $this->get           = $get;
-        $this->query         = $repository->createQueryBuilder('x');
+        $this->getParameters = $get;
+        $this->queryBuilder  = $repository->createQueryBuilder('x');
     }
 
     /**
@@ -57,21 +57,11 @@ class DoctrineBuilder extends AbstractBuilder implements BuilderInterface
      */
     public function make($withKeys = false)
     {
-        $draw   = $this->get['draw'];
-        $search = $this->get['search']['value'];
-
         $count = $this->getTotalRows($this->entityName);
-        $data  = $this->getQueryResult($this->query);
+        $data  = $this->getQueryResult($this->queryBuilder, $this->getParameters);
         $data  = $this->removeKeys($data, ! $withKeys);
 
-        $response = [
-            'draw'            => $draw,
-            'recordsFiltered' => (empty($search)) ? $count : count($data),
-            'recordsTotal'    => $count,
-            'data'            => $data,
-        ];
-
-        return $response;
+        return $this->getResponse($data, $count, $this->getParameters);
     }
 
     /**
@@ -81,7 +71,7 @@ class DoctrineBuilder extends AbstractBuilder implements BuilderInterface
      */
     public function setQueryBulder(QueryBuilder $queryBuilder)
     {
-        $this->query = $queryBuilder;
+        $this->queryBuilder = $queryBuilder;
 
         return $this;
     }
@@ -90,27 +80,24 @@ class DoctrineBuilder extends AbstractBuilder implements BuilderInterface
      * Returns the generated query.
      *
      * @param  \Doctrine\ORM\QueryBuilder $queryBuilder
+     * @param  array                      $get
      * @return array
      */
-    protected function getQueryResult(QueryBuilder $queryBuilder)
+    protected function getQueryResult(QueryBuilder $queryBuilder, array $get)
     {
-        $limit  = $this->get['length'];
-        $offset = $this->get['start'];
-        $search = $this->get['search']['value'];
+        $classMetadata = $this->entityManager->getClassMetadata($this->entityName);
+        $rootAliases   = $queryBuilder->getRootAliases();
 
-        $aliases = $queryBuilder->getRootAliases();
-        $columns = $this->entityManager->getClassMetadata($this->entityName);
-
-        foreach ($columns->getColumnNames() as $index => $column) {
+        foreach ($classMetadata->getColumnNames() as $index => $column) {
             $method    = ($index == 0) ? 'where' : 'orWhere';
-            $parameter = '%' . $search . '%';
-            $statement = $aliases[0] . '.' . $column . ' LIKE :' . $column;
+            $parameter = '%' . $get['search']['value'] . '%';
+            $statement = $rootAliases[0] . '.' . $column . ' LIKE :' . $column;
 
             $queryBuilder->$method($statement)->setParameter($column, $parameter);
         }
 
-        $queryBuilder->setMaxResults($limit);
-        $queryBuilder->setFirstResult($offset);
+        $queryBuilder->setMaxResults($get['length']);
+        $queryBuilder->setFirstResult($get['start']);
 
         return $queryBuilder->getQuery()->getResult(Query::HYDRATE_ARRAY);
     }
