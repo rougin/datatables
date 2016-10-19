@@ -4,6 +4,9 @@ All notable changes to `Datatables` will be documented in this file
 
 ## [0.2.0](https://github.com/rougin/datatables/compare/v0.1.1...v0.2.0) - 2016-10-20
 
+### Changed
+- Minimum PHP version to `v5.4.0`
+
 ### Removed
 - Third-party dependencies
 

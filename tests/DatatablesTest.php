@@ -8,9 +8,6 @@ use Doctrine\ORM\EntityManager;
 use Rougin\Datatables\DoctrineBuilder;
 use Rougin\Datatables\EloquentBuilder;
 
-use PHPUnit_Framework_TestCase;
-
-use Rougin\Datatables\User\DoctrineModel;
 use Rougin\Datatables\User\EloquentModel;
 
 /**
@@ -19,7 +16,7 @@ use Rougin\Datatables\User\EloquentModel;
  * @package Datatables
  * @author  Rougin Royce Gutib <rougingutib@gmail.com>
  */
-class DatatablesTest extends PHPUnit_Framework_TestCase
+class DatatablesTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var array
@@ -142,7 +139,7 @@ class DatatablesTest extends PHPUnit_Framework_TestCase
     {
         $this->setUpDoctrine();
 
-        $entity   = DoctrineModel::class;
+        $entity   = 'Rougin\Datatables\User\DoctrineModel';
         $builder  = new DoctrineBuilder($entity, $this->entityManager, $this->get);
 
         $response = $builder->make();
@@ -159,7 +156,7 @@ class DatatablesTest extends PHPUnit_Framework_TestCase
     {
         $this->setUpEloquent();
 
-        $model    = EloquentModel::class;
+        $model    = 'Rougin\Datatables\User\EloquentModel';
         $builder  = new EloquentBuilder($model, $this->get);
         $response = $builder->make();
 
@@ -175,7 +172,7 @@ class DatatablesTest extends PHPUnit_Framework_TestCase
     {
         $this->setUpDoctrine();
 
-        $entity  = DoctrineModel::class;
+        $entity  = 'Rougin\Datatables\User\DoctrineModel';
         $builder = new DoctrineBuilder($entity, $this->entityManager, $this->get);
 
         $repository   = $this->entityManager->getRepository($entity);

@@ -1,11 +1,5 @@
 <?php
 
-use Rougin\Datatables\DoctrineBuilder;
-use Rougin\Datatables\EloquentBuilder;
-
-use Rougin\Datatables\Example\Models\DoctrineModel;
-use Rougin\Datatables\Example\Models\EloquentModel;
-
 require_once __DIR__ . '/../vendor/autoload.php';
 
 $orm = 'doctrine';
@@ -15,16 +9,16 @@ switch ($orm) {
         require_once __DIR__ . '/src/Bootstrap/Doctrine.php';
         require_once __DIR__ . '/src/Models/DoctrineModel.php';
 
-        $entity  = DoctrineModel::class;
-        $builder = new DoctrineBuilder($entity, $entityManager, $_GET);
+        $entity  = 'Rougin\Datatables\Example\Models\DoctrineModel';
+        $builder = new Rougin\Datatables\DoctrineBuilder($entity, $entityManager, $_GET);
 
         break;
     case 'eloquent':
         require_once __DIR__ . '/src/Bootstrap/Eloquent.php';
         require_once __DIR__ . '/src/Models/EloquentModel.php';
 
-        $model   = EloquentModel::class;
-        $builder = new EloquentBuilder($model, $_GET);
+        $model   = 'Rougin\Datatables\Example\Models\EloquentModel';
+        $builder = new Rougin\Datatables\EloquentBuilder($model, $_GET);
 
         break;
 }
