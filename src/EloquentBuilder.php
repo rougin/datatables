@@ -30,6 +30,12 @@ class EloquentBuilder extends AbstractBuilder implements BuilderInterface
     {
         $this->get   = $get;
         $this->model = $model;
+
+        if (is_string($this->model)) {
+            $model = new $this->model;
+
+            $this->model = $model->query();
+        }
     }
 
     /**
@@ -44,13 +50,8 @@ class EloquentBuilder extends AbstractBuilder implements BuilderInterface
         $draw    = $this->get['draw'];
         $search  = $this->get['search']['value'];
 
-        if (is_string($this->model)) {
-            $model   = new $this->model;
-            $builder = $model->query();
-        }
-
         $count = $builder->count();
-        $data  = $this->getQueryResult($builder);
+        $data  = $this->getQueryResult($builder, $this->get);
         $data  = $this->removeKeys($data, ! $withKeys);
 
         $response = [
@@ -67,24 +68,21 @@ class EloquentBuilder extends AbstractBuilder implements BuilderInterface
      * Returns the data from the builder.
      *
      * @param  \Illuminate\Database\Eloquent\Builder $builder
+     * @param  array                                 $get
      * @return array
      */
-    protected function getQueryResult(Builder $builder)
+    protected function getQueryResult(Builder $builder, array $get)
     {
-        $limit  = $this->get['length'];
-        $offset = $this->get['start'];
-        $search = $this->get['search']['value'];
-
         $schema  = $builder->getModel()->getConnection()->getSchemaBuilder();
         $table   = $builder->getModel()->getTable();
         $columns = $schema->getColumnListing($table);
 
         foreach ($columns as $index => $column) {
-            $builder->orWhere($column, 'LIKE', '%' . $search . '%');
+            $builder->orWhere($column, 'LIKE', '%' . $get['search']['value'] . '%');
         }
 
-        $builder->limit($limit);
-        $builder->offset($offset);
+        $builder->limit($get['length']);
+        $builder->offset($get['start']);
 
         return $builder->get()->toArray();
     }

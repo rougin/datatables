@@ -41,9 +41,12 @@ class DoctrineBuilder extends AbstractBuilder implements BuilderInterface
      */
     public function __construct($entityName, EntityManager $entityManager, array $get)
     {
-        $this->entityName    = $entityName;
+        $repository = $entityManager->getRepository($entityName);
+
         $this->entityManager = $entityManager;
+        $this->entityName    = $entityName;
         $this->get           = $get;
+        $this->query         = $repository->createQueryBuilder('x');
     }
 
     /**
@@ -86,19 +89,14 @@ class DoctrineBuilder extends AbstractBuilder implements BuilderInterface
     /**
      * Returns the generated query.
      *
-     * @param  \Doctrine\ORM\QueryBuilder|null $queryBuilder
+     * @param  \Doctrine\ORM\QueryBuilder $queryBuilder
      * @return array
      */
-    protected function getQueryResult(QueryBuilder $queryBuilder = null)
+    protected function getQueryResult(QueryBuilder $queryBuilder)
     {
         $limit  = $this->get['length'];
         $offset = $this->get['start'];
         $search = $this->get['search']['value'];
-
-        if (is_null($queryBuilder)) {
-            $repository   = $this->entityManager->getRepository($this->entityName);
-            $queryBuilder = $repository->createQueryBuilder('x');
-        }
 
         $aliases = $queryBuilder->getRootAliases();
         $columns = $this->entityManager->getClassMetadata($this->entityName);
