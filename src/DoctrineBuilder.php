@@ -57,11 +57,11 @@ class DoctrineBuilder extends AbstractBuilder implements BuilderInterface
      */
     public function make($withKeys = false)
     {
-        $count = $this->getTotalRows($this->entityName);
-        $data  = $this->getQueryResult($this->queryBuilder, $this->getParameters);
-        $data  = $this->removeKeys($data, ! $withKeys);
+        $count  = $this->getTotalRows($this->entityName);
+        $data   = $this->getQueryResult($this->queryBuilder, $this->getParameters);
+        $result = $this->removeKeys($data, ! $withKeys);
 
-        return $this->getResponse($data, $count, $this->getParameters);
+        return $this->getResponse($result, $count, $this->getParameters);
     }
 
     /**
