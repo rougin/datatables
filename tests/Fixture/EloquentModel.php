@@ -1,6 +1,6 @@
 <?php
 
-namespace Rougin\Datatables\Example\Models;
+namespace Rougin\Datatables\Fixture;
 
 use Illuminate\Database\Eloquent\Model;
 

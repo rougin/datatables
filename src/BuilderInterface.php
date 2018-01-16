@@ -11,10 +11,10 @@ namespace Rougin\Datatables;
 interface BuilderInterface
 {
     /**
-     * Generates a JSON response to the DataTable.
+     * Generates a JSON response to the Datatable.
      *
-     * @param  boolean $withKeys
+     * @param  boolean $values
      * @return array
      */
-    public function make($withKeys = false);
+    public function make($values = false);
 }

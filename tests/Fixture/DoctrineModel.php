@@ -1,6 +1,6 @@
 <?php
 
-namespace Rougin\Datatables\User;
+namespace Rougin\Datatables\Fixture;
 
 /**
  * Doctrine Model

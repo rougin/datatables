@@ -7,7 +7,7 @@
 [![Quality Score][ico-code-quality]][link-code-quality]
 [![Total Downloads][ico-downloads]][link-downloads]
 
-Handles DataTables' [server-side processing](https://datatables.net/examples/data_sources/server_side.html) using [Doctrine](http://docs.doctrine-project.org/projects/doctrine-orm/en/latest) or [Eloquent](https://laravel.com/docs/master/eloquent).
+Use [Doctrine](http://docs.doctrine-project.org/projects/doctrine-orm/en/latest) or [Eloquent](https://laravel.com/docs/master/eloquent) in [Datatables](https://datatables.net/)' [server-side processing](https://datatables.net/examples/data_sources/server_side.html).
 
 ## Install
 
@@ -21,11 +21,15 @@ $ composer require rougin/datatables
 
 ### Doctrine
 
-[example/ajax.php](example/ajax.php)
-
 ``` php
-$entity  = 'Rougin\Datatables\Example\Models\DoctrineModel';
-$builder = new Rougin\Datatables\DoctrineBuilder($entity, $entityManager, $_GET);
+use Rougin\Datatables\DoctrineBuilder;
+
+// $manager variable must return an EntityManager instance.
+// See "tests/DoctrineBuilderTest.php" for sample code.
+
+$entity = 'Acme\Models\User';
+
+$builder = new DoctrineBuilder($entity, $manager, $_GET);
 
 header('Content-Type: application/json');
 
@@ -34,18 +38,17 @@ echo json_encode($builder->make());
 
 ### Eloquent
 
-[example/ajax.php](example/ajax.php)
-
 ``` php
-$model   = 'Rougin\Datatables\Example\Models\EloquentModel';
-$builder = new Rougin\Datatables\EloquentBuilder($model, $_GET);
+use Rougin\Datatables\EloquentBuilder;
+
+$model = 'Acme\Models\User';
+
+$builder = new EloquentBuilder($model, $_GET);
 
 header('Content-Type: application/json');
 
 echo json_encode($builder->make());
 ```
-
-You can also try the demo in [example](example) directory.
 
 ## Change log
 
@@ -57,10 +60,6 @@ Please see [CHANGELOG](CHANGELOG.md) for more information what has changed recen
 $ composer require doctrine/orm illuminate/database --dev
 $ composer test
 ```
-
-## Contributing
-
-Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
 
 ## Security
 
