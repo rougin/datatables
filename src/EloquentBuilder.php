@@ -28,16 +28,16 @@ class EloquentBuilder extends AbstractBuilder implements BuilderInterface
      */
     public function __construct($builder, $data)
     {
-        $this->builder = $builder;
-
         $this->data = $data;
 
         // If a model's name is injected.
         if (is_string($builder) === true) {
             $model = new $builder;
 
-            $this->builder = $model->query();
+            $builder = $model->query();
         }
+
+        $this->builder = $builder;
     }
 
     /**
