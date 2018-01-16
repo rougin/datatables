@@ -24,8 +24,8 @@ matrix:
 before_script:
   - travis_retry composer self-update
   - travis_retry composer update ${COMPOSER_FLAGS} --no-interaction --prefer-source
-  - composer require doctrine/orm --dev
-  - if [[ $TRAVIS_PHP_VERSION != '5.3' ]]; then composer require illuminate/database symfony/console:~2.5 --dev; fi
+  - composer require doctrine/orm symfony/console:~2.5 --dev
+  - if [[ $TRAVIS_PHP_VERSION != '5.3' ]]; then composer require illuminate/database --dev; fi
 
 script:
   - vendor/bin/phpunit --coverage-text --coverage-clover=coverage.clover
