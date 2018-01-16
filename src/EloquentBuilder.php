@@ -60,7 +60,7 @@ class EloquentBuilder extends AbstractBuilder implements BuilderInterface
     /**
      * Returns the data from the builder.
      *
-     * @param  array $get
+     * @param  array $data
      * @return array
      */
     protected function result(array $data)
