@@ -2,9 +2,9 @@
 
 namespace Rougin\Datatables;
 
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
-use Doctrine\ORM\EntityManager;
 
 /**
  * Doctrine Builder
@@ -15,108 +15,105 @@ use Doctrine\ORM\EntityManager;
 class DoctrineBuilder extends AbstractBuilder implements BuilderInterface
 {
     /**
-     * @var \Doctrine\ORM\EntityManager
+     * @var \Doctrine\ORM\QueryBuilder
      */
-    protected $entityManager;
-
-    /**
-     * @var string
-     */
-    protected $entityName;
+    protected $builder;
 
     /**
      * @var array
      */
-    protected $getParameters;
+    protected $data = array();
 
     /**
-     * @var \Doctrine\ORM\QueryBuilder
+     * @var string
      */
-    protected $queryBuilder;
+    protected $entity;
 
     /**
-     * @param string                      $entityName
-     * @param \Doctrine\ORM\EntityManager $entityManager
-     * @param array                       $get
+     * @var \Doctrine\ORM\EntityManager
      */
-    public function __construct($entityName, EntityManager $entityManager, array $get)
+    protected $manager;
+
+    /**
+     * Initializes the builder instance.
+     *
+     * @param \Doctrine\ORM\EntityManager $manager
+     * @param string                      $entity
+     * @param array|null                  $data
+     */
+    public function __construct(EntityManager $manager, $entity, array $data = null)
     {
-        $repository = $entityManager->getRepository($entityName);
+        $repository = $manager->getRepository($entity);
 
-        $this->entityManager = $entityManager;
-        $this->entityName    = $entityName;
-        $this->getParameters = $get;
-        $this->queryBuilder  = $repository->createQueryBuilder('x');
+        $this->builder = $repository->createQueryBuilder('x');
+
+        $this->data = $data === null ? array() : $data;
+
+        $this->entity = $entity;
+
+        $this->manager = $manager;
     }
 
     /**
-     * Generates a JSON response to the DataTable.
+     * Generates a JSON response to the Datatable.
      *
-     * @param  boolean $withKeys
+     * @param  boolean $values
      * @return array
      */
-    public function make($withKeys = false)
+    public function make($values = false)
     {
-        $result = $this->getQueryResult($this->queryBuilder, $this->getParameters);
+        $items = $query = $this->query($this->entity);
 
-        return $this->getResponse(
-            $this->removeKeys($result, ! $withKeys),
-            $this->getTotalRows($this->entityName),
-            $this->getParameters
-        );
-    }
+        $values === true && $items = $this->values($query);
 
-    /**
-     * Sets the query builder.
-     *
-     * @param \Doctrine\ORM\QueryBuilder $queryBuilder
-     */
-    public function setQueryBulder(QueryBuilder $queryBuilder)
-    {
-        $this->queryBuilder = $queryBuilder;
+        $rows = (integer) $this->rows($this->entity);
 
-        return $this;
+        return $this->response($items, $this->data, $rows);
     }
 
     /**
      * Returns the generated query.
      *
-     * @param  \Doctrine\ORM\QueryBuilder $queryBuilder
-     * @param  array                      $get
+     * @param  string $entity
      * @return array
      */
-    protected function getQueryResult(QueryBuilder $queryBuilder, array $get)
+    protected function query($entity)
     {
-        $classMetadata = $this->entityManager->getClassMetadata($this->entityName);
-        $rootAliases   = $queryBuilder->getRootAliases();
+        $metadata = $this->manager->getClassMetadata($entity);
 
-        foreach ($classMetadata->getColumnNames() as $index => $column) {
-            $method    = ($index == 0) ? 'where' : 'orWhere';
-            $parameter = '%' . $get['search']['value'] . '%';
-            $statement = $rootAliases[0] . '.' . $column . ' LIKE :' . $column;
+        $aliases = $this->builder->getRootAliases();
 
-            $queryBuilder->$method($statement)->setParameter($column, $parameter);
+        foreach ($metadata->getColumnNames() as $index => $column) {
+            $method = $index === 0 ? 'where' : 'orWhere';
+
+            $statement = $aliases[0] . '.' . $column . ' LIKE :' . $column;
+
+            $parameter = '%' . $this->data['search']['value'] . '%';
+
+            $this->builder->$method($statement)->setParameter($column, $parameter);
         }
 
-        $queryBuilder->setMaxResults($get['length']);
-        $queryBuilder->setFirstResult($get['start']);
+        $this->builder->setMaxResults($this->data['length']);
 
-        return $queryBuilder->getQuery()->getResult(Query::HYDRATE_ARRAY);
+        $this->builder->setFirstResult($this->data['start']);
+
+        return $this->builder->getQuery()->getResult(Query::HYDRATE_ARRAY);
     }
 
     /**
      * Returns the total rows of an entity.
      *
-     * @param  string $entityName
+     * @param  string $entity
      * @return integer
      */
-    protected function getTotalRows($entityName)
+    protected function rows($entity)
     {
-        $query = $this->entityManager->createQueryBuilder();
+        $builder = $this->manager->createQueryBuilder();
 
-        $query->select($query->expr()->count('x.id'));
-        $query->from($entityName, 'x');
+        $builder->select($builder->expr()->count('x.id'));
 
-        return $query->getQuery()->getSingleScalarResult();
+        $builder->from($entity, 'x');
+
+        return $builder->getQuery()->getSingleScalarResult();
     }
 }

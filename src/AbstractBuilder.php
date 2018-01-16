@@ -11,46 +11,46 @@ namespace Rougin\Datatables;
 abstract class AbstractBuilder
 {
     /**
-     * Returns the data in DataTables' response format.
+     * Returns the data in Datatables' response format.
      *
      * @param  array   $data
-     * @param  integer $count
-     * @param  array   $get
+     * @param  array   $parameters
+     * @param  integer $rows
      * @return array
      */
-    protected function getResponse(array $data, $count, array $get)
+    protected function response(array $data, array $parameters, $rows)
     {
-        $search = $get['search']['value'];
+        $search = $parameters['search']['value'];
 
-        $response = [];
+        $filtered = $search === null ? $rows : count($data);
 
-        $response['draw']            = $get['draw'];
-        $response['recordsFiltered'] = (empty($search)) ? $count : count($data);
-        $response['recordsTotal']    = $count;
-        $response['data']            = $data;
+        $response = array('draw' => $parameters['draw']);
+
+        $response['recordsFiltered'] = $filtered;
+
+        $response['recordsTotal'] = $rows;
+
+        $response['data'] = $data;
 
         return $response;
     }
 
     /**
-     * Removes the keys in the array.
+     * Converts the array items as values only.
      *
-     * @param  array   $data
-     * @param  boolean $remove
+     * @param  array $data
      * @return array
      */
-    protected function removeKeys(array $data, $remove = true)
+    protected function values(array $data)
     {
-        $result = $data;
+        $values = $data;
 
-        if ($remove) {
-            $valuesOnly = function ($item) {
-                return array_values($item);
-            };
+        foreach ($data as $key => $item) {
+            $value = array_values($item);
 
-            $result = array_map($valuesOnly, $data);
+            $values[$key] = (array) $value;
         }
 
-        return $result;
+        return $values;
     }
 }

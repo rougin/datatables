@@ -2,8 +2,6 @@
 
 namespace Rougin\Datatables;
 
-use Illuminate\Database\Eloquent\Builder;
-
 /**
  * Eloquent Builder
  *
@@ -15,65 +13,76 @@ class EloquentBuilder extends AbstractBuilder implements BuilderInterface
     /**
      * @var array
      */
-    protected $getParameters;
+    protected $data;
 
     /**
-     * @var mixed
+     * @var \Illuminate\Database\Eloquent\Builder
      */
-    protected $queryBuilder;
+    protected $builder;
 
     /**
-     * @param mixed  $builder
-     * @param array  $get
+     * Initializes the builder instance.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder|string $builder
+     * @param array                                        $data
      */
-    public function __construct($builder, $get)
+    public function __construct($builder, $data)
     {
-        $this->getParameters = $get;
-        $this->queryBuilder  = $builder;
+        $this->builder = $builder;
+
+        $this->data = $data;
 
         // If a model's name is injected.
-        if (is_string($builder)) {
+        if (is_string($builder) === true) {
             $model = new $builder;
 
-            $this->queryBuilder = $model->query();
+            $this->builder = $model->query();
         }
     }
 
     /**
-     * Generates a JSON response to the DataTable.
+     * Generates a JSON response to the Datatable.
      *
-     * @param  boolean $withKeys
+     * @param  boolean $values
      * @return array
      */
-    public function make($withKeys = false)
+    public function make($values = false)
     {
-        $count = $this->queryBuilder->count();
-        $data  = $this->getQueryResult($this->queryBuilder, $this->getParameters);
-        $data  = $this->removeKeys($data, ! $withKeys);
+        $result = (array) $this->result($this->data);
 
-        return $this->getResponse($data, $count, $this->getParameters);
+        $values === true && $result = $this->values($result);
+
+        $rows = (integer) $this->builder->count();
+
+        return $this->response($result, $this->data, $rows);
     }
 
     /**
      * Returns the data from the builder.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder $builder
-     * @param  array                                 $get
+     * @param  array $get
      * @return array
      */
-    protected function getQueryResult(Builder $builder, array $get)
+    protected function result(array $data)
     {
-        $schema  = $builder->getModel()->getConnection()->getSchemaBuilder();
-        $table   = $builder->getModel()->getTable();
+        $connection = $this->builder->getModel()->getConnection();
+
+        $schema = $connection->getSchemaBuilder();
+
+        $table = $this->builder->getModel()->getTable();
+
         $columns = $schema->getColumnListing($table);
 
-        foreach ($columns as $index => $column) {
-            $builder->orWhere($column, 'LIKE', '%' . $get['search']['value'] . '%');
+        foreach ($columns as $column) {
+            $query = '%' . $data['search']['value'] . '%';
+
+            $this->builder->orWhere($column, 'LIKE', $query);
         }
 
-        $builder->limit($get['length']);
-        $builder->offset($get['start']);
+        $this->builder->limit($data['length']);
 
-        return $builder->get()->toArray();
+        $this->builder->offset($data['start']);
+
+        return $this->builder->get()->toArray();
     }
 }
