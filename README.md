@@ -29,7 +29,7 @@ use Rougin\Datatables\DoctrineBuilder;
 
 $entity = 'Acme\Models\User';
 
-$builder = new DoctrineBuilder($entity, $manager, $_GET);
+$builder = new DoctrineBuilder($manager, $entity, $_GET);
 
 header('Content-Type: application/json');
 
