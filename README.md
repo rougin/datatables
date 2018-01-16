@@ -7,7 +7,7 @@
 [![Quality Score][ico-code-quality]][link-code-quality]
 [![Total Downloads][ico-downloads]][link-downloads]
 
-Use [Doctrine](http://docs.doctrine-project.org/projects/doctrine-orm/en/latest) or [Eloquent](https://laravel.com/docs/master/eloquent) in [Datatables](https://datatables.net/)' [server-side processing](https://datatables.net/examples/data_sources/server_side.html).
+Use [Doctrine](http://docs.doctrine-project.org/projects/doctrine-orm/en/latest) or [Eloquent](https://laravel.com/docs/master/eloquent) for [Datatables](https://datatables.net/)' [server-side processing](https://datatables.net/examples/data_sources/server_side.html).
 
 ## Install
 
@@ -19,7 +19,7 @@ $ composer require rougin/datatables
 
 ## Usage
 
-### Doctrine
+### DoctrineBuilder
 
 ``` php
 use Rougin\Datatables\DoctrineBuilder;
@@ -27,7 +27,7 @@ use Rougin\Datatables\DoctrineBuilder;
 // $manager variable must return an EntityManager instance.
 // See "tests/DoctrineBuilderTest.php" for sample code.
 
-$entity = 'Acme\Models\User';
+$entity = 'Acme\Doctrine\Models\User';
 
 $builder = new DoctrineBuilder($manager, $entity, $_GET);
 
@@ -36,12 +36,14 @@ header('Content-Type: application/json');
 echo json_encode($builder->make());
 ```
 
-### Eloquent
+**NOTE**: `$manager` must return an instance of `Doctrine\ORM\EntityManager`. See [DoctrineBuilderTest::setUp](tests/DoctrineBuilderTest.php#L26) for the sample implementation.
+
+### EloquentBuilder
 
 ``` php
 use Rougin\Datatables\EloquentBuilder;
 
-$model = 'Acme\Models\User';
+$model = 'Acme\Eloquent\Models\UserModel';
 
 $builder = new EloquentBuilder($model, $_GET);
 
