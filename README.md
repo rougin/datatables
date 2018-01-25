@@ -24,9 +24,6 @@ $ composer require rougin/datatables
 ``` php
 use Rougin\Datatables\DoctrineBuilder;
 
-// $manager variable must return an EntityManager instance.
-// See "tests/DoctrineBuilderTest.php" for sample code.
-
 $entity = 'Acme\Doctrine\Models\User';
 
 $builder = new DoctrineBuilder($manager, $entity, $_GET);
