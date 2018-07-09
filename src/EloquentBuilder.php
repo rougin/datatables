@@ -48,9 +48,7 @@ class EloquentBuilder extends AbstractBuilder implements BuilderInterface
      */
     public function make($values = false)
     {
-        $result = (array) $this->result($this->data);
-
-        $values === true && $result = $this->values($result);
+        $result = (array) $this->result($values, $this->data);
 
         $rows = (integer) $this->builder->count();
 
@@ -60,29 +58,34 @@ class EloquentBuilder extends AbstractBuilder implements BuilderInterface
     /**
      * Returns the data from the builder.
      *
-     * @param  array $data
+     * @param  boolean $values
+     * @param  array   $data
      * @return array
      */
-    protected function result(array $data)
+    protected function result($values, array $data)
     {
-        $connection = $this->builder->getModel()->getConnection();
+        if ($values === false) {
+            $connection = $this->builder->getModel()->getConnection();
 
-        $schema = $connection->getSchemaBuilder();
+            $schema = $connection->getSchemaBuilder();
 
-        $table = $this->builder->getModel()->getTable();
+            $table = $this->builder->getModel()->getTable();
 
-        $columns = $schema->getColumnListing($table);
+            $columns = $schema->getColumnListing($table);
 
-        foreach ($columns as $column) {
-            $query = '%' . $data['search']['value'] . '%';
+            foreach ($columns as $column) {
+                $query = '%' . $data['search']['value'] . '%';
 
-            $this->builder->orWhere($column, 'LIKE', $query);
+                $this->builder->orWhere($column, 'LIKE', $query);
+            }
+
+            $this->builder->limit($data['length']);
+
+            $this->builder->offset($data['start']);
+
+            return $this->builder->get()->toArray();
         }
 
-        $this->builder->limit($data['length']);
-
-        $this->builder->offset($data['start']);
-
-        return $this->builder->get()->toArray();
+        return (array) $this->values($result);
     }
 }
