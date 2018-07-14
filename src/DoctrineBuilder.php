@@ -47,7 +47,7 @@ class DoctrineBuilder extends AbstractBuilder implements BuilderInterface
 
         $this->builder = $repository->createQueryBuilder('x');
 
-        $this->data = $data === null ? array() : $data;
+        $this->data = is_null($data) ? array() : $data;
 
         $this->entity = $entity;
 
