@@ -1,7 +1,7 @@
 {
     "name": "rougin/datatables",
-    "description": "Use Doctrine or Eloquent for Datatables' server-side processing.",
-    "keywords": ["ajax", "datatables", "doctrine", "eloquent", "php"],
+    "description": "Doctrine/Eloquent wrapper for Datatables' server-side processing.",
+    "keywords": ["ajax", "datatables", "doctrine", "eloquent", "php", "server-side"],
     "homepage": "https://github.com/rougin/datatables",
     "license": "MIT",
     "authors": [
