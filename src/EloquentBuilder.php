@@ -64,28 +64,26 @@ class EloquentBuilder extends AbstractBuilder implements BuilderInterface
      */
     protected function result($values, array $data)
     {
-        if ($values === false) {
-            $connection = $this->builder->getModel()->getConnection();
+        $connection = $this->builder->getModel()->getConnection();
 
-            $schema = $connection->getSchemaBuilder();
+        $schema = $connection->getSchemaBuilder();
 
-            $table = $this->builder->getModel()->getTable();
+        $table = $this->builder->getModel()->getTable();
 
-            $columns = $schema->getColumnListing($table);
+        $columns = $schema->getColumnListing($table);
 
-            foreach ($columns as $column) {
-                $query = '%' . $data['search']['value'] . '%';
+        foreach ($columns as $column) {
+            $query = '%' . $data['search']['value'] . '%';
 
-                $this->builder->orWhere($column, 'LIKE', $query);
-            }
-
-            $this->builder->limit($data['length']);
-
-            $this->builder->offset($data['start']);
-
-            return $this->builder->get()->toArray();
+            $this->builder->orWhere($column, 'LIKE', $query);
         }
 
-        return (array) $this->values($result);
+        $this->builder->limit($data['length']);
+
+        $this->builder->offset($data['start']);
+
+        $result = $this->builder->get()->toArray();
+
+        return $values ? $this->values($result) : $result;
     }
 }
