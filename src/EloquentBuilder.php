@@ -72,7 +72,7 @@ class EloquentBuilder extends AbstractBuilder implements BuilderInterface
 
         $columns = $schema->getColumnListing($table);
 
-        if( isset( $data['search']['value']) ){
+        if( isset( $data['search']['value'] ) ){
             foreach ($columns as $column) {
                 $query = '%' . $data['search']['value'] . '%';
 
