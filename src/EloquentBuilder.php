@@ -72,10 +72,12 @@ class EloquentBuilder extends AbstractBuilder implements BuilderInterface
 
         $columns = $schema->getColumnListing($table);
 
-        foreach ($columns as $column) {
-            $query = '%' . $data['search']['value'] . '%';
+        if( isset( $data['search']['value'] ) ){
+            foreach ($columns as $column) {
+                $query = '%' . $data['search']['value'] . '%';
 
-            $this->builder->orWhere($column, 'LIKE', $query);
+                $this->builder->orWhere($column, 'LIKE', $query);
+            }
         }
 
         $this->builder->limit($data['length']);
