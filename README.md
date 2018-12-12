@@ -7,17 +7,17 @@
 [![Quality Score][ico-code-quality]][link-code-quality]
 [![Total Downloads][ico-downloads]][link-downloads]
 
-Use [Doctrine](http://docs.doctrine-project.org/projects/doctrine-orm/en/latest) or [Eloquent](https://laravel.com/docs/master/eloquent) for [Datatables](https://datatables.net/)' [server-side processing](https://datatables.net/examples/data_sources/server_side.html).
+Datatables is a package that uses [Doctrine](http://docs.doctrine-project.org/projects/doctrine-orm/en/latest) or [Eloquent](https://laravel.com/docs/master/eloquent) to generate a [server-side AJAX result](https://datatables.net/examples/data_sources/server_side.html) to a [Datatable](https://datatables.net/) instance.
 
-## Install
+## Installation
 
-Via Composer
+Install `Datatables` via [Composer](https://getcomposer.org/):
 
 ``` bash
 $ composer require rougin/datatables
 ```
 
-## Usage
+## Basic Usage
 
 ### DoctrineBuilder
 
@@ -49,7 +49,7 @@ header('Content-Type: application/json');
 echo json_encode($builder->make());
 ```
 
-## Change log
+## Changelog
 
 Please see [CHANGELOG][link-changelog] for more information what has changed recently.
 
@@ -60,27 +60,21 @@ $ composer require doctrine/orm illuminate/database --dev
 $ composer test
 ```
 
-## Security
-
-If you discover any security related issues, please email rougingutib@gmail.com instead of using the issue tracker.
-
 ## Credits
 
-- [Rougin Royce Gutib][link-author]
 - [All contributors][link-contributors]
 
 ## License
 
 The MIT License (MIT). Please see [LICENSE][link-license] for more information.
 
-[ico-version]: https://img.shields.io/packagist/v/rougin/datatables.svg?style=flat-square
-[ico-license]: https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square
-[ico-travis]: https://img.shields.io/travis/rougin/datatables/master.svg?style=flat-square
-[ico-scrutinizer]: https://img.shields.io/scrutinizer/coverage/g/rougin/datatables.svg?style=flat-square
 [ico-code-quality]: https://img.shields.io/scrutinizer/g/rougin/datatables.svg?style=flat-square
 [ico-downloads]: https://img.shields.io/packagist/dt/rougin/datatables.svg?style=flat-square
+[ico-license]: https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square
+[ico-scrutinizer]: https://img.shields.io/scrutinizer/coverage/g/rougin/datatables.svg?style=flat-square
+[ico-travis]: https://img.shields.io/travis/rougin/datatables/master.svg?style=flat-square
+[ico-version]: https://img.shields.io/packagist/v/rougin/datatables.svg?style=flat-square
 
-[link-author]: https://rougin.github.io
 [link-changelog]: https://github.com/rougin/datatables/blob/master/CHANGELOG.md
 [link-code-quality]: https://scrutinizer-ci.com/g/rougin/datatables
 [link-contributors]: https://github.com/rougin/datatables/contributors

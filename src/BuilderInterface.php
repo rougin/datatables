@@ -6,7 +6,7 @@ namespace Rougin\Datatables;
  * Builder Interface
  *
  * @package Datatables
- * @author  Rougin Royce Gutib <rougingutib@gmail.com>
+ * @author  Rougin Gutib <rougingutib@gmail.com>
  */
 interface BuilderInterface
 {

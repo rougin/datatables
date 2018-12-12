@@ -10,7 +10,7 @@ use Doctrine\ORM\QueryBuilder;
  * Doctrine Builder
  *
  * @package Datatables
- * @author  Rougin Royce Gutib <rougingutib@gmail.com>
+ * @author  Rougin Gutib <rougingutib@gmail.com>
  */
 class DoctrineBuilder extends AbstractBuilder implements BuilderInterface
 {

@@ -9,7 +9,7 @@ use Doctrine\ORM\EntityManager;
  * Doctrine Builder Test
  *
  * @package Datatables
- * @author  Rougin Royce Gutib <rougingutib@gmail.com>
+ * @author  Rougin Gutib <rougingutib@gmail.com>
  */
 class DoctrineBuilderTest extends AbstractTestCase
 {

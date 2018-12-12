@@ -8,7 +8,7 @@ use Illuminate\Database\Capsule\Manager;
  * Eloquent Builder Test
  *
  * @package Datatables
- * @author  Rougin Royce Gutib <rougingutib@gmail.com>
+ * @author  Rougin Gutib <rougingutib@gmail.com>
  */
 class EloquentBuilderTest extends AbstractTestCase
 {

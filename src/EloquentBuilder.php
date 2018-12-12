@@ -6,7 +6,7 @@ namespace Rougin\Datatables;
  * Eloquent Builder
  *
  * @package Datatables
- * @author  Rougin Royce Gutib <rougingutib@gmail.com>
+ * @author  Rougin Gutib <rougingutib@gmail.com>
  */
 class EloquentBuilder extends AbstractBuilder implements BuilderInterface
 {
