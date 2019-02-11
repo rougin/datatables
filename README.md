@@ -19,35 +19,39 @@ $ composer require rougin/datatables
 
 ## Basic Usage
 
-### DoctrineBuilder
+### Doctrine
 
 ``` php
-use Rougin\Datatables\DoctrineBuilder;
+use Doctrine\DBAL\Configuration;
+use Doctrine\DBAL\DriverManager;
+use Rougin\Datatables\Builder\DoctrineBuilder;
+use Rougin\Datatables\Message\RequestFactory;
+use Rougin\Datatables\Message\ResponseFactory;
 
-$entity = 'Acme\Doctrine\Models\User';
+$config = new Configuration;
+$database = array('charset' => 'utf8');
+$database['driver'] = 'pdo_mysql';
+$database['user'] = 'root';
+$database['pass'] = '';
+$database['dbname'] = 'test';
+$database['host'] = 'localhost';
+$connection = DriverManager::getConnection($database, $config);
+$builder = new DoctrineBuilder($connection->createQueryBuilder());
 
-$builder = new DoctrineBuilder($manager, $entity, $_GET);
+$request = RequestFactory::http($_GET);
 
-header('Content-Type: application/json');
+$builder->factory(new ResponseFactory);
 
-echo json_encode($builder->make());
+$builder->table('users');
+
+$response = $builder->build($request);
+
+echo json_encode($response->result());
 ```
 
-**NOTE**: `$manager` must return an instance of `Doctrine\ORM\EntityManager`. See [DoctrineBuilderTest::setUp](tests/DoctrineBuilderTest.php#L26) for the sample implementation.
+### Eloquent
 
-### EloquentBuilder
-
-``` php
-use Rougin\Datatables\EloquentBuilder;
-
-$model = 'Acme\Eloquent\Models\UserModel';
-
-$builder = new EloquentBuilder($model, $_GET);
-
-header('Content-Type: application/json');
-
-echo json_encode($builder->make());
-```
+Coming soon.
 
 ## Changelog
 
@@ -56,7 +60,6 @@ Please see [CHANGELOG][link-changelog] for more information what has changed rec
 ## Testing
 
 ``` bash
-$ composer require doctrine/orm illuminate/database --dev
 $ composer test
 ```
 
