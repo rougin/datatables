@@ -29,9 +29,17 @@ class RequestFactory implements RequestCreation
 
         $factory->draw($data['draw']);
 
-        $factory->columns($data['columns']);
+        foreach ($data['columns'] as $item)
+        {
+            $column = ColumnFactory::http($item);
 
-        $factory->orders($data['order']);
+            $factory->column($column);
+        }
+
+        if (isset($data['order']))
+        {
+            $factory->orders($data['order']);
+        }
 
         $factory->start($data['start']);
 
@@ -53,12 +61,7 @@ class RequestFactory implements RequestCreation
 
     public function columns(array $columns)
     {
-        foreach ($columns as $item)
-        {
-            $column = ColumnFactory::http($item);
-
-            $this->column($column);
-        }
+        $this->columns = $columns;
 
         return $this;
     }
@@ -79,7 +82,7 @@ class RequestFactory implements RequestCreation
 
     public function make()
     {
-        return new Request($this->columns, $this->orders, $this->start, $this->length, $this->draw, $this->search);
+        return new Request($this->columns, $this->search, $this->orders, $this->start, $this->length, $this->draw);
     }
 
     public function order(OrderContract $order)

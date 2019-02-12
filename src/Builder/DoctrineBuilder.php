@@ -64,6 +64,8 @@ class DoctrineBuilder implements BuilderContract
 
         $result = $query->execute()->fetch();
 
+        $this->query->resetQueryParts();
+
         $result = array_values($result);
 
         return (integer) $result[0];
@@ -121,6 +123,8 @@ class DoctrineBuilder implements BuilderContract
         $result = $query->execute()->fetch();
 
         $result = array_values($result);
+
+        $this->query->resetQueryParts();
 
         return (integer) $result[0];
     }

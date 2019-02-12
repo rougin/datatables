@@ -27,6 +27,6 @@ class Order implements OrderContract
 
     public function descending()
     {
-        return ! $this->descending;
+        return ! $this->ascending;
     }
 }

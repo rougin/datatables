@@ -16,7 +16,7 @@ class Request implements RequestContract
 
     protected $start = 0;
 
-    public function __construct($columns, $orders, $start, $length, $draw, $search)
+    public function __construct($columns, $search = null, $orders = null, $start = 0, $length = 10, $draw = 1)
     {
         $this->columns = $columns;
 
