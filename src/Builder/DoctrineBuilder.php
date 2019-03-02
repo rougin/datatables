@@ -8,6 +8,8 @@ use Rougin\Datatables\Message\RequestContract;
 
 class DoctrineBuilder implements BuilderContract
 {
+    protected $callback;
+
     protected $factory;
 
     protected $query;
@@ -47,6 +49,13 @@ class DoctrineBuilder implements BuilderContract
         return $this;
     }
 
+    public function query($callback)
+    {
+        $this->callback = $callback;
+
+        return $this;
+    }
+
     public function table($table)
     {
         $this->table = $table;
@@ -61,6 +70,13 @@ class DoctrineBuilder implements BuilderContract
         $query->from($this->table);
 
         $query = $this->where($request, $query);
+
+        if ($this->callback)
+        {
+            $callback = $this->callback;
+
+            $query = $callback($query);
+        }
 
         $result = $query->execute()->fetch();
 
@@ -85,6 +101,13 @@ class DoctrineBuilder implements BuilderContract
         $query->from($this->table);
 
         $query = $this->where($request, $query);
+
+        if ($this->callback)
+        {
+            $callback = $this->callback;
+
+            $query = $callback($query);
+        }
 
         $query = $this->order($request, $query);
 
@@ -120,11 +143,16 @@ class DoctrineBuilder implements BuilderContract
 
         $query->from($this->table);
 
+        if ($this->callback)
+        {
+            $callback = $this->callback;
+
+            $query = $callback($query);
+        }
+
         $result = $query->execute()->fetch();
 
         $result = array_values($result);
-
-        $this->query->resetQueryParts();
 
         return (integer) $result[0];
     }
@@ -144,7 +172,20 @@ class DoctrineBuilder implements BuilderContract
                 continue;
             }
 
-            $predicate = $column->name() . " LIKE '%$keyword%'";
+            $operations = array('>', '>=', '<', '<=', '=');
+
+            if ($this->operation($keyword, $operations) !== false)
+            {
+                $operation = $this->operation($keyword, $operations);
+
+                $keyword = str_replace($operation, '', $keyword);
+
+                $predicate = $column->name() . " $operation '$keyword'";
+            }
+            else
+            {
+                $predicate = $column->name() . " LIKE '%$keyword%'";
+            }
 
             if ($index === 0)
             {
@@ -164,5 +205,18 @@ class DoctrineBuilder implements BuilderContract
         }
 
         return $query;
+    }
+
+    protected function operation($value, $array)
+    {
+        foreach ($array as $item)
+        {
+            if (strpos($value, $item) !== false)
+            {
+                return $item;
+            }
+        }
+
+        return false;
     }
 }
