@@ -31,6 +31,11 @@ class RequestFactory implements RequestCreation
 
         foreach ($data['columns'] as $item)
         {
+            if (! $item['data'])
+            {
+                continue;
+            }
+
             $column = ColumnFactory::http($item);
 
             $factory->column($column);
