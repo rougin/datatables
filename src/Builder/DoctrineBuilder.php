@@ -8,7 +8,9 @@ use Rougin\Datatables\Message\RequestContract;
 
 class DoctrineBuilder implements BuilderContract
 {
-    protected $callback;
+    protected $after;
+
+    protected $before;
 
     protected $factory;
 
@@ -49,9 +51,16 @@ class DoctrineBuilder implements BuilderContract
         return $this;
     }
 
-    public function query($callback)
+    public function after($after)
     {
-        $this->callback = $callback;
+        $this->after = $after;
+
+        return $this;
+    }
+
+    public function before($before)
+    {
+        $this->before = $before;
 
         return $this;
     }
@@ -67,15 +76,15 @@ class DoctrineBuilder implements BuilderContract
     {
         $query = $this->query->select('COUNT(*)');
 
-        $query->from($this->table);
+        $query->from($this->table, $this->table[0]);
 
         $query = $this->where($request, $query);
 
-        if ($this->callback)
+        if ($this->after)
         {
-            $callback = $this->callback;
+            $after = $this->after;
 
-            $query = $callback($query);
+            $query = $after($query);
         }
 
         $result = $query->execute()->fetch();
@@ -93,20 +102,31 @@ class DoctrineBuilder implements BuilderContract
 
         foreach ($request->columns() as $column)
         {
-            array_push($fields, $column->name());
+            $field = $this->table[0] . '.' . $column->name();
+
+            array_push($fields, (string) $field);
         }
 
-        $query = $this->query->select($fields);
+        if ($this->before)
+        {
+            $before = $this->before;
 
-        $query->from($this->table);
+            $query = $before($this->query, $fields);
+        }
+        else
+        {
+            $query = $this->query->select($fields);
+
+            $query->from($this->table, $this->table[0]);
+        }
 
         $query = $this->where($request, $query);
 
-        if ($this->callback)
+        if ($this->after)
         {
-            $callback = $this->callback;
+            $after = $this->after;
 
-            $query = $callback($query);
+            $query = $after($query);
         }
 
         $query = $this->order($request, $query);
@@ -114,6 +134,8 @@ class DoctrineBuilder implements BuilderContract
         $query->setFirstResult($request->start());
 
         $query->setMaxResults($request->length());
+
+        // echo $query->getSql();exit;
 
         return $query;
     }
@@ -141,13 +163,13 @@ class DoctrineBuilder implements BuilderContract
     {
         $query->select('COUNT(*)');
 
-        $query->from($this->table);
+        $query->from($this->table, $this->table[0]);
 
-        if ($this->callback)
+        if ($this->after)
         {
-            $callback = $this->callback;
+            $after = $this->after;
 
-            $query = $callback($query);
+            $query = $after($query);
         }
 
         $result = $query->execute()->fetch();
@@ -172,7 +194,7 @@ class DoctrineBuilder implements BuilderContract
                 continue;
             }
 
-            $operations = array('>', '>=', '<', '<=', '=');
+            $operations = array('<>', '>=', '<=', '>', '<', '=');
 
             if ($this->operation($keyword, $operations) !== false)
             {
@@ -180,11 +202,11 @@ class DoctrineBuilder implements BuilderContract
 
                 $keyword = str_replace($operation, '', $keyword);
 
-                $predicate = $column->name() . " $operation '$keyword'";
+                $predicate = $this->table[0] . '.' . $column->name() . " $operation '$keyword'";
             }
             else
             {
-                $predicate = $column->name() . " LIKE '%$keyword%'";
+                $predicate = $this->table[0] . '.' . $column->name() . " LIKE '%$keyword%'";
             }
 
             if ($index === 0)
@@ -203,6 +225,8 @@ class DoctrineBuilder implements BuilderContract
 
             $query = $query->andWhere($predicate);
         }
+
+        // echo $query->getSql();exit;
 
         return $query;
     }
