@@ -31,6 +31,8 @@ class DoctrineBuilder implements BuilderContract
 
         $total = $this->total($this->query);
 
+        $this->query->resetQueryParts();
+
         $factory->total((integer) $total);
 
         $factory->filtered($filtered);
