@@ -2,13 +2,13 @@
     "name": "rougin/datatables",
     "description": "PHP wrapper for Datatables' server-side.",
     "keywords": ["ajax", "datatables", "php", "server-side"],
-    "homepage": "https://rougin.github.io/datatables/",
+    "homepage": "https://roug.in/datatables/",
     "license": "MIT",
     "authors":
     [
         {
             "email": "rougingutib@gmail.com",
-            "homepage": "https://rougin.github.io/",
+            "homepage": "https://roug.in/",
             "name": "Rougin Gutib",
             "role": "Software Engineer"
         }
