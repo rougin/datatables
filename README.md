@@ -7,7 +7,7 @@
 [![Quality Score][ico-code-quality]][link-code-quality]
 [![Total Downloads][ico-downloads]][link-downloads]
 
-Datatables is a package that uses [Doctrine](http://docs.doctrine-project.org/projects/doctrine-orm/en/latest) or [Eloquent](https://laravel.com/docs/master/eloquent) to generate a [server-side AJAX result](https://datatables.net/examples/data_sources/server_side.html) to a [Datatable](https://datatables.net/) instance.
+Datatables is a package that uses [Doctrine](http://docs.doctrine-project.org/projects/doctrine-orm/en/latest) or [Eloquent](https://laravel.com/docs/master/eloquent) to generate a [server-side AJAX result](https://datatables.net/examples/data_sources/server_side.html) to a [Datatable](https://datatables.net/) instance with little to no configuration.
 
 ## Installation
 
@@ -19,87 +19,35 @@ $ composer require rougin/datatables
 
 ## Basic Usage
 
-### Landing page
-
-``` html
-<!-- index.html -->
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.min.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.19/css/jquery.dataTables.min.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.19/css/dataTables.bootstrap4.min.css">
-</head>
-<body>
-  <div class="container">
-    <table id="table" class="display">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Name</th>
-          <th>Age</th>
-        </tr>
-      </thead>
-    </table>
-  </div>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/js/bootstrap.bundle.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.19/js/jquery.dataTables.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.19/js/dataTables.bootstrap4.min.js"></script>
-  <script>
-    $(document).ready(function ()
-    {
-      $('#table').DataTable(
-      {
-        'processing': true,
-        'serverSide': true,
-        'ajax': 'test.php',
-        'columns': [
-          { 'data': 'id', 'name': 'id' },
-          { 'data': 'name', 'name': 'name' },
-          { 'data': 'age', 'name': 'age' },
-        ],
-      });
-    });
-  </script>
-</body>
-</html>
-```
-
 ### Doctrine
 
 ``` php
-// test.php
+use Rougin\Datatables\DoctrineBuilder;
 
-use Doctrine\DBAL\DriverManager;
-use Rougin\Datatables\Builder\DoctrineBuilder;
-use Rougin\Datatables\Message\RequestFactory;
-use Rougin\Datatables\Message\ResponseFactory;
+$entity = 'Acme\Doctrine\Models\User';
 
-$database = array('charset' => 'utf8');
-$database['dbname'] = 'test';
-$database['driver'] = 'pdo_mysql';
-$database['host'] = 'localhost';
-$database['pass'] = '';
-$database['user'] = 'root';
-$conn = DriverManager::getConnection($database);
-$query = $conn->createQueryBuilder();
-$builder = new DoctrineBuilder($query);
+$builder = new DoctrineBuilder($manager, $entity, $_GET);
 
-$request = RequestFactory::http($_GET);
+header('Content-Type: application/json');
 
-$builder->factory(new ResponseFactory);
-
-$builder->table('users');
-
-$response = $builder->build($request);
-
-echo json_encode($response->result());
+echo json_encode($builder->make());
 ```
+
+**NOTE**: `$manager` must return an instance of `Doctrine\ORM\EntityManager`. See [DoctrineBuilderTest::setUp](https://github.com/rougin/datatables/blob/master/tests/DoctrineBuilderTest.php#L26) for the sample implementation.
 
 ### Eloquent
 
-Coming soon.
+``` php
+use Rougin\Datatables\EloquentBuilder;
+
+$model = 'Acme\Eloquent\Models\UserModel';
+
+$builder = new EloquentBuilder($model, $_GET);
+
+header('Content-Type: application/json');
+
+echo json_encode($builder->make());
+```
 
 ## Changelog
 
