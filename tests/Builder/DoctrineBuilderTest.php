@@ -68,13 +68,6 @@ class DoctrineBuilderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $result);
     }
 
-    public function testBuildMethodWithoutTable()
-    {
-        $this->expectException('BadMethodCallException');
-
-        $this->builder->build($this->simpleRequest());
-    }
-
     protected function requestWithSearch()
     {
         $data = array('draw' => '1');
