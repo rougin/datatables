@@ -114,12 +114,19 @@ class PdoSource implements SourceInterface
 
             foreach ($columns as $column)
             {
+                $name = $column->getName();
+
+                if (! $name)
+                {
+                    continue;
+                }
+
                 // TODO: Allow to convert columns with a data type ----
                 // ----------------------------------------------------
 
                 // PHP 8.0 and above parses numbers as native types ---
                 // as opposed to pure strings prior to this version ---
-                $row[] = (string) $item[$column->getName()];
+                $row[] = (string) $item[$name];
                 // ----------------------------------------------------
             }
 
@@ -214,7 +221,9 @@ class PdoSource implements SourceInterface
 
             if ($column->isOrderable())
             {
-                $sort = $order->isAscending() ? 'ASC' : 'DESC';
+                $sort = $order->isAscending() ? 'ASC' : '';
+
+                $sort = $order->isDescending() ? 'DESC' : $sort;
 
                 $items[] = '`' . $name . '` ' . $sort;
             }
@@ -245,6 +254,11 @@ class PdoSource implements SourceInterface
         foreach ($columns as $item)
         {
             $name = $item->getName();
+
+            if (! $name)
+            {
+                continue;
+            }
 
             if ($item->isSearchable())
             {

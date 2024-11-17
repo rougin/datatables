@@ -1,6 +1,6 @@
 {
   "name": "rougin/datatables",
-  "description": "Easy handling of DataTables' server-side.",
+  "description": "Handles server-side of DataTables in PHP.",
   "keywords": [ "datatable", "php-datatables", "php-table" ],
   "homepage": "https://roug.in/datatables/",
   "license": "MIT",

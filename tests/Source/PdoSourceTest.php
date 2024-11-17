@@ -48,15 +48,39 @@ class PdoSourceTest extends Testcase
 
         $request = Params::columnNames();
 
-        $table = Table::fromRequest($request);
-
-        $table->setName('users');
+        $table = Table::fromRequest('users', $request);
 
         $query = new Query($request, $this->source);
 
-        $result = $query->getResult($table);
+        $actual = $query->getResult($table)->toJson();
 
-        $actual = $result->toJson();
+        // Temporary fix for floating numbers as ------
+        // results are different in PHP 8.1 onwards ---
+        $actual = str_replace('.0"', '"', $actual);
+        // --------------------------------------------
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * @return void
+     */
+    public function test_few_columns()
+    {
+        $expected = '{"draw":4,"recordsFiltered":57,"recordsTotal":57,"data":[["Airi","Satou","Accountant","Tokyo"],["Angelica","Ramos","Chief Executive Officer (CEO)","London"],["Ashton","Cox","Junior Technical Author","San Francisco"],["Bradley","Greer","Software Engineer","London"],["Brenden","Wagner","Software Engineer","San Francisco"],["Brielle","Williamson","Integration Specialist","New York"],["Bruno","Nash","Software Engineer","London"],["Caesar","Vance","Pre-Sales Support","New York"],["Cara","Stevens","Sales Assistant","New York"],["Cedric","Kelly","Senior Javascript Developer","Edinburgh"]]}';
+
+        // Temporary fix for floating numbers as ------
+        // results are different in PHP 8.1 onwards ---
+        $expected = str_replace('.0"', '"', $expected);
+        // --------------------------------------------
+
+        $request = Params::fewColumns();
+
+        $table = Table::fromRequest('users', $request);
+
+        $query = new Query($request, $this->source);
+
+        $actual = $query->getResult($table)->toJson();
 
         // Temporary fix for floating numbers as ------
         // results are different in PHP 8.1 onwards ---
@@ -80,13 +104,11 @@ class PdoSourceTest extends Testcase
 
         $request = Params::globalSearch();
 
-        $table = $this->setTable($request);
+        $table = $this->setTable('users', $request);
 
         $query = new Query($request, $this->source);
 
-        $result = $query->getResult($table);
-
-        $actual = $result->toJson();
+        $actual = $query->getResult($table)->toJson();
 
         // Temporary fix for floating numbers as ------
         // results are different in PHP 8.1 onwards ---
@@ -110,13 +132,11 @@ class PdoSourceTest extends Testcase
 
         $request = Params::initialData();
 
-        $table = $this->setTable($request);
+        $table = $this->setTable('users', $request);
 
         $query = new Query($request, $this->source);
 
-        $result = $query->getResult($table);
-
-        $actual = $result->toJson();
+        $actual = $query->getResult($table)->toJson();
 
         // Temporary fix for floating numbers as ------
         // results are different in PHP 8.1 onwards ---
@@ -127,15 +147,14 @@ class PdoSourceTest extends Testcase
     }
 
     /**
+     * @param string                     $name
      * @param \Rougin\Datatables\Request $request
      *
      * @return \Rougin\Datatables\Table
      */
-    protected function setTable(Request $request)
+    protected function setTable($name, Request $request)
     {
-        $table = Table::fromRequest($request);
-
-        $table->setName('users');
+        $table = Table::fromRequest($name, $request);
 
         $table->mapColumn(0, 'forename');
         $table->mapColumn(1, 'surname');

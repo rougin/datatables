@@ -15,9 +15,9 @@ class Column
     protected $data;
 
     /**
-     * @var string
+     * @var string|null
      */
-    protected $name;
+    protected $name = null;
 
     /**
      * @var boolean
@@ -35,7 +35,7 @@ class Column
     protected $searchable = false;
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getName()
     {
