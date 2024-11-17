@@ -230,13 +230,65 @@ Please see [CHANGELOG][link-changelog] for more information what has changed rec
 
 ## Testing
 
+If there is a need to check the source code of `Datatables` for development purposes (e.g., creating fixes, new features, etc.), kindly clone this repository first to a local machine:
+
+``` bash
+$ https://github.com/rougin/authsum.git "Sample"
+```
+
+After cloning, use `Composer` to install its required packages:
+
+``` bash
+$ cd Sample
+$ composer update
+```
+
+Once the packages were installed, kindly check the following below on how to maintain the code quality and styling guide when interacting the source code of `Datatables`:
+
+### Unit tests
+
+`Datatables` also contains unit tests that were written in [PHPUnit](https://phpunit.de/index.html):
+
 ``` bash
 $ composer test
 ```
 
-## Credits
+When creating fixes or implementing new features, it is recommended to run the above command to always check if the updated code introduces errors during development.
 
-- [All contributors][link-contributors]
+### Code quality
+
+To retain the code quality of `Datatables`, a static code analysis code tool named [PHPStan](https://phpstan.org/) is being used during development. To start, kindly install the specified package in global environment of `Composer`:
+
+``` bash
+$ composer global require phpstan/phpstan
+```
+
+Once installed, `PHPStan` can now be run using the `phpstan` command:
+
+``` bash
+$ cd Sample
+$ phpstan
+```
+
+### Coding style
+
+Asides from code quality, `Datatables` also uses a tool named [PHP Coding Standards Fixer](https://cs.symfony.com/) for maintaining an opinionated style guide. The said tool needs also to be installed in the global environment of `Composer`:
+
+``` bash
+$ composer global require friendsofphp/php-cs-fixer
+```
+
+After being installed, use the `php-cs-fixer` command in the same `Datatables` directory:
+
+``` bash
+$ cd Sample
+$ php-cs-fixer fix --config=phpstyle.php
+```
+
+The specified `phpstyle.php` currently follows the [PSR-12](https://www.php-fig.org/psr/psr-12/) as the baseline of the coding style and uses [Allman](https://en.wikipedia.org/wiki/Indentation_style#Allman_style) as its indentation style.
+
+> [!NOTE]
+> Installing `PHPStan` and `PHP Coding Standards Fixer` requires a version of PHP that is `7.4` and above.
 
 ## License
 
