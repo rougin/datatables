@@ -6,7 +6,7 @@
 [![Coverage Status][ico-coverage]][link-coverage]
 [![Total Downloads][ico-downloads]][link-downloads]
 
-`Datatables` is a simple that handles the [server-side of DataTables](https://datatables.net/examples/data_sources/server_side.html). Its server-side response can be used by `DataTables` from the HTML with little to no configuration required.
+`Datatables` is a simple PHP package that handles the [server-side of DataTables](https://datatables.net/examples/data_sources/server_side.html). Its server-side response can be used by `DataTables` from the HTML which requires little to no configuration.
 
 ## Installation
 
@@ -30,6 +30,14 @@ options.ajax = 'http://localhost:8000'
 options.serverSide = true
 
 new DataTable('#example', options)
+```
+
+``` html
+<!-- index.html -->
+
+<!-- ... -->
+
+<table id="example"></table>
 ```
 
 > [!NOTE]
