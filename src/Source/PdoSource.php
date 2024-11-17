@@ -114,6 +114,9 @@ class PdoSource implements SourceInterface
 
             foreach ($columns as $column)
             {
+                // TODO: Allow to convert columns with a data type ----
+                // ----------------------------------------------------
+
                 // PHP 8.0 and above parses numbers as native types ---
                 // as opposed to pure strings prior to this version ---
                 $row[] = (string) $item[$column->getName()];
