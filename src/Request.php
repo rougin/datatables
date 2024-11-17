@@ -51,11 +51,7 @@ class Request
 
             /** @var string|null */
             $name = $item['name'];
-
-            if ($name)
-            {
-                $row->setName($name);
-            }
+            $row = $name ? $row->setName($name) : $row;
 
             /** @var string */
             $data = $item['data'];
@@ -85,14 +81,6 @@ class Request
         }
 
         return $result;
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    public function getData()
-    {
-        return $this->data;
     }
 
     /**
@@ -135,27 +123,18 @@ class Request
             $index = $item['column'];
             $new->setIndex($index);
 
-            // Specify if direction is ascending or descending ---
+            // Specify if direction is ascending or descending ---------
             /** @var string */
             $dir = $item['dir'];
 
-            $sort = Order::SORT_ASC;
-
-            if ($dir === 'desc')
-            {
-                $sort = Order::SORT_DESC;
-            }
+            $sort = $dir === 'asc' ? Order::SORT_ASC : Order::SORT_DESC;
 
             $new->setSort($sort);
-            // ---------------------------------------------------
+            // ---------------------------------------------------------
 
             /** @var string|null */
             $name = $item['name'];
-
-            if ($name)
-            {
-                $new->setName($name);
-            }
+            $new = $name ? $new->setName($name) : $new;
 
             $result[] = $new;
         }

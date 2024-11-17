@@ -93,6 +93,34 @@ class PdoSourceTest extends Testcase
     /**
      * @return void
      */
+    public function test_global_and_column_search()
+    {
+        $expected = '{"draw":6,"recordsFiltered":3,"recordsTotal":57,"data":[["Airi","Satou","Accountant","Tokyo","2008-11-28","162700.0"],["Garrett","Winters","Accountant","Tokyo","2011-07-25","170750.0"],["Jackson","Bradshaw","Director","New York","2008-09-26","645750.0"]]}';
+
+        // Temporary fix for floating numbers as ------
+        // results are different in PHP 8.1 onwards ---
+        $expected = str_replace('.0"', '"', $expected);
+        // --------------------------------------------
+
+        $request = Params::globalAndColumnSearch();
+
+        $table = $this->setTable('users', $request);
+
+        $query = new Query($request, $this->source);
+
+        $actual = $query->getResult($table)->toJson();
+
+        // Temporary fix for floating numbers as ------
+        // results are different in PHP 8.1 onwards ---
+        $actual = str_replace('.0"', '"', $actual);
+        // --------------------------------------------
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * @return void
+     */
     public function test_global_search()
     {
         $expected = '{"draw":2,"recordsFiltered":6,"recordsTotal":57,"data":[["Bradley","Greer","Software Engineer","London","2012-10-13","132000.0"],["Brenden","Wagner","Software Engineer","San Francisco","2011-06-07","206850.0"],["Brielle","Williamson","Integration Specialist","New York","2012-12-02","372000.0"],["Bruno","Nash","Software Engineer","London","2011-05-03","163500.0"],["Jackson","Bradshaw","Director","New York","2008-09-26","645750.0"],["Michael","Bruce","Javascript Developer","Singapore","2011-06-27","183000.0"]]}';
@@ -131,6 +159,34 @@ class PdoSourceTest extends Testcase
         // --------------------------------------------
 
         $request = Params::initialData();
+
+        $table = $this->setTable('users', $request);
+
+        $query = new Query($request, $this->source);
+
+        $actual = $query->getResult($table)->toJson();
+
+        // Temporary fix for floating numbers as ------
+        // results are different in PHP 8.1 onwards ---
+        $actual = str_replace('.0"', '"', $actual);
+        // --------------------------------------------
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * @return void
+     */
+    public function test_search_column()
+    {
+        $expected = '{"draw":5,"recordsFiltered":4,"recordsTotal":57,"data":[["Bradley","Greer","Software Engineer","London","2012-10-13","132000.0"],["Brenden","Wagner","Software Engineer","San Francisco","2011-06-07","206850.0"],["Brielle","Williamson","Integration Specialist","New York","2012-12-02","372000.0"],["Bruno","Nash","Software Engineer","London","2011-05-03","163500.0"]]}';
+
+        // Temporary fix for floating numbers as ------
+        // results are different in PHP 8.1 onwards ---
+        $expected = str_replace('.0"', '"', $expected);
+        // --------------------------------------------
+
+        $request = Params::searchColumn();
 
         $table = $this->setTable('users', $request);
 

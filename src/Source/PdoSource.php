@@ -258,12 +258,14 @@ class PdoSource implements SourceInterface
                 continue;
             }
 
-            if ($item->isSearchable())
+            if (! $value || ! $item->isSearchable())
             {
-                $this->values[] = '%' . $value . '%';
-
-                $global[] = '`' . $name . '` LIKE ?';
+                continue;
             }
+
+            $this->values[] = '%' . $value . '%';
+
+            $global[] = '`' . $name . '` LIKE ?';
         }
         // ------------------------------------------
 
@@ -276,12 +278,14 @@ class PdoSource implements SourceInterface
 
             $search = $item->getSearch();
 
-            if ($value = $search->getValue())
+            if (! $value = $search->getValue())
             {
-                $this->values[] = '%' . $value . '%';
-
-                $items[] = '`' . $name . '` LIKE ?';
+                continue;
             }
+
+            $this->values[] = '%' . $value . '%';
+
+            $items[] = '`' . $name . '` LIKE ?';
         }
         // ------------------------------------------
 
@@ -294,7 +298,7 @@ class PdoSource implements SourceInterface
 
         if (count($items) > 0)
         {
-            if ($query === '')
+            if ($query !== '')
             {
                 $query .= ' AND ';
             }

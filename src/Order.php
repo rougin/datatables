@@ -41,6 +41,8 @@ class Order
     }
 
     /**
+     * TODO: Add unit test for using name of order.
+     *
      * @return string
      */
     public function getName()

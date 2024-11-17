@@ -28,6 +28,8 @@ class Search
     }
 
     /**
+     * TODO: Add unit test for searching by regex.
+     *
      * @return boolean
      */
     public function isRegex()
