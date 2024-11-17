@@ -48,18 +48,40 @@ From the PHP part, use the `Table` class to define the specified table:
 ``` php
 // index.php
 
+use Rougin\Datatables\Config;
 use Rougin\Datatables\Table;
 
 // ...
 
-$table = new Table;
+// The $_GET variable should be returned ---
+// and parsed as array<string, mixed> ------
+$config = new Config($_GET);
+// -----------------------------------------
 
-$table->newColumn('id', 'ID');
-$table->newColumn('email', 'Email');
-$table->newColumn('name', 'Name');
+// Parse columns based on the Config ---
+$table = Table::fromConfig($config);
+// -------------------------------------
 ```
 
-Once the `Table` class has been properly defined, use the `Query` class and the `Config` class to generate the requested data to the table: 
+By default, getting columns from the payload of the Javascript part of `DataTables` does provide its name. As the column name is required for getting its data from a source, there is a need to map its column to the database table:
+
+``` php
+// index.php
+
+// ...
+
+$table->mapColumn(0, 'forename');
+$table->mapColumn(1, 'surname');
+$table->mapColumn(2, 'position');
+$table->mapColumn(3, 'office');
+$table->mapColumn(4, 'date_start');
+$table->mapColumn(5, 'salary');
+
+// ...
+
+```
+
+Once the table has been properly configured, use the `Query` class and the `Config` class to generate the requested data to the table: 
 
 ``` php
 // index.php
@@ -70,7 +92,7 @@ use Rougin\Datatables\Query;
 // ...
 
 // Parse the data from the query params ---
-$config = new Config($_GET);
+$config = new Config($params);
 // ----------------------------------------
 
 $query = new Query($config);
@@ -92,6 +114,10 @@ $result = $query->parse($table);
 echo $result->toJson();
 ```
 
+``` bash
+$ php index.php
+```
+
 ``` json
 {
   "draw": 2,
@@ -106,7 +132,7 @@ To provide data from a specified source (e.g., from database), kindly use the `s
 ``` php
 // index.php
 
-use Acme\Depots\UserDepot;
+use Acme\Sources\ModelSource;
 use Acme\Models\User;
 use Rougin\Datatables\Source;
 
@@ -116,9 +142,7 @@ use Rougin\Datatables\Source;
 $query = /** ... */;
 
 /** @var \Rougin\Datatables\Source\SourceInterface */
-$source = new UserDepot;
-
-$source->setModel(new User);
+$source = new ModelSource(new User);
 
 $query->setSource($source);
 
