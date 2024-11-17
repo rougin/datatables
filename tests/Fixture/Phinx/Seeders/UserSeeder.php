@@ -47,7 +47,7 @@ class UserSeeder extends AbstractSeed
             /** @var string */
             $dateStart = $item['date_start'];
             $time = strtotime($dateStart);
-            $dateStart = date('Y-m-d', $time);
+            $dateStart = date('Y-m-d', (int) $time);
             $row['date_start'] = $dateStart;
 
             /** @var string */

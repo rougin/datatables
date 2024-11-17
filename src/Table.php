@@ -15,15 +15,25 @@ class Table
     protected $columns = array();
 
     /**
-     * @param \Rougin\Datatables\Config $config
+     * @var string
+     */
+    protected $name;
+
+    /**
+     * @var string
+     */
+    protected $table;
+
+    /**
+     * @param \Rougin\Datatables\Request $request
      *
      * @return self
      */
-    public static function fromConfig(Config $config)
+    public static function fromRequest(Request $request)
     {
         $table = new Table;
 
-        $columns = $config->getColumns();
+        $columns = $request->getColumns();
 
         foreach ($columns as $column)
         {
@@ -54,6 +64,14 @@ class Table
     }
 
     /**
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->table;
+    }
+
+    /**
      * @param string $name
      *
      * @return self
@@ -65,5 +83,17 @@ class Table
         $column->setName($name);
 
         return $this->addColumn($column);
+    }
+
+    /**
+     * @param string $name
+     *
+     * @return self
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+
+        return $this;
     }
 }

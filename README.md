@@ -48,19 +48,19 @@ From the PHP part, use the `Table` class to define the specified table:
 ``` php
 // index.php
 
-use Rougin\Datatables\Config;
+use Rougin\Datatables\Request;
 use Rougin\Datatables\Table;
 
 // ...
 
 // The $_GET variable should be returned ---
 // and parsed as array<string, mixed> ------
-$config = new Config($_GET);
+$request = new Request($_GET);
 // -----------------------------------------
 
-// Parse columns based on the Config ---
-$table = Table::fromConfig($config);
-// -------------------------------------
+// Parse columns based on the Request ---
+$table = Table::fromRequest($request);
+// --------------------------------------
 ```
 
 By default, getting columns from the payload of the Javascript part of `DataTables` does provide its name. As the column name is required for getting its data from a source, there is a need to map its column to the database table:
@@ -69,6 +69,8 @@ By default, getting columns from the payload of the Javascript part of `DataTabl
 // index.php
 
 // ...
+
+$table->setName('users');
 
 $table->mapColumn(0, 'forename');
 $table->mapColumn(1, 'surname');
@@ -81,21 +83,21 @@ $table->mapColumn(5, 'salary');
 
 ```
 
-Once the table has been properly configured, use the `Query` class and the `Config` class to generate the requested data to the table: 
+Once the table has been properly configured, use the `Query` class and the `Request` class to generate the requested data to the table: 
 
 ``` php
 // index.php
 
-use Rougin\Datatables\Config;
+use Rougin\Datatables\Request;
 use Rougin\Datatables\Query;
 
 // ...
 
 // Parse the data from the query params ---
-$config = new Config($params);
+$request = new Request($params);
 // ----------------------------------------
 
-$query = new Query($config);
+$query = new Query($request);
 
 /** @var \Rougin\Datatables\Result */
 $result = $query->getResult($table);

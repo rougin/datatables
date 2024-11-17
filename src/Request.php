@@ -7,7 +7,7 @@ namespace Rougin\Datatables;
  *
  * @author Rougin Gutib <rougingutib@gmail.com>
  */
-class Config
+class Request
 {
     /**
      * @var array<string, mixed>
@@ -24,7 +24,7 @@ class Config
         parse_str($string, $data);
 
         /** @var array<string, mixed> $data */
-        return new Config($data);
+        return new Request($data);
     }
 
     /**

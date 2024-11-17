@@ -2,6 +2,8 @@
 
 namespace Rougin\Datatables\Source;
 
+use Rougin\Datatables\Table;
+
 /**
  * @package Datatables
  *
@@ -29,4 +31,13 @@ interface SourceInterface
      * @return integer
      */
     public function getTotal();
+
+    /**
+     * Sets the table to be used in the source.
+     *
+     * @param \Rougin\Datatables\Table $table
+     *
+     * @return self
+     */
+    public function setTable(Table $table);
 }

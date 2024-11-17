@@ -69,6 +69,7 @@ class Result
 
     /**
      * @param integer $draw
+     *
      * @return self
      */
     public function setDraw($draw)
@@ -80,6 +81,7 @@ class Result
 
     /**
      * @param integer $filtered
+     *
      * @return self
      */
     public function setFiltered($filtered)
@@ -91,6 +93,7 @@ class Result
 
     /**
      * @param string[][] $items
+     *
      * @return self
      */
     public function setItems($items)
@@ -102,6 +105,7 @@ class Result
 
     /**
      * @param integer $total
+     *
      * @return self
      */
     public function setTotal($total)

@@ -12,9 +12,9 @@ use Rougin\Datatables\Source\SourceInterface;
 class Query
 {
     /**
-     * @var \Rougin\Datatables\Config
+     * @var \Rougin\Datatables\Request
      */
-    protected $config;
+    protected $request;
 
     /**
      * @var \Rougin\Datatables\Source\SourceInterface
@@ -22,11 +22,11 @@ class Query
     protected $source;
 
     /**
-     * @param \Rougin\Datatables\Config $config
+     * @param \Rougin\Datatables\Request $request
      */
-    public function __construct(Config $config)
+    public function __construct(Request $request)
     {
-        $this->config = $config;
+        $this->request = $request;
     }
 
     /**
@@ -36,16 +36,18 @@ class Query
      */
     public function getResult(Table $table)
     {
+        $this->source->setTable($table);
+
         $result = new Result;
+
+        $items = $this->source->getItems();
+        $result->setItems($items);
 
         $filter = $this->source->getFiltered();
         $result->setFiltered($filter);
 
-        $draw = $this->config->getDraw();
+        $draw = $this->request->getDraw();
         $result->setDraw($draw);
-
-        $items = $this->source->getItems();
-        $result->setItems($items);
 
         $total = $this->source->getTotal();
         return $result->setTotal($total);
@@ -53,6 +55,7 @@ class Query
 
     /**
      * @param \Rougin\Datatables\Source\SourceInterface $source
+     *
      * @return self
      */
     public function setSource(SourceInterface $source)
