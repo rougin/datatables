@@ -10,11 +10,9 @@ namespace Rougin\Datatables;
 class Column
 {
     /**
-     * NOTE: From payload, it is known as "data".
-     *
-     * @var integer
+     * @var string
      */
-    protected $index;
+    protected $data;
 
     /**
      * @var string
@@ -69,13 +67,13 @@ class Column
     }
 
     /**
-     * @param integer $index
+     * @param string $data
      *
      * @return self
      */
-    public function setIndex($index)
+    public function setData($data)
     {
-        $this->index = $index;
+        $this->data = $data;
 
         return $this;
     }

@@ -22,11 +22,16 @@ class Query
     protected $source;
 
     /**
-     * @param \Rougin\Datatables\Request $request
+     * @param \Rougin\Datatables\Request                $request
+     * @param \Rougin\Datatables\Source\SourceInterface $source
      */
-    public function __construct(Request $request)
+    public function __construct(Request $request, SourceInterface $source)
     {
         $this->request = $request;
+
+        $source->setRequest($request);
+
+        $this->setSource($source);
     }
 
     /**

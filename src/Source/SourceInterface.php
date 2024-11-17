@@ -2,6 +2,7 @@
 
 namespace Rougin\Datatables\Source;
 
+use Rougin\Datatables\Request;
 use Rougin\Datatables\Table;
 
 /**
@@ -12,7 +13,7 @@ use Rougin\Datatables\Table;
 interface SourceInterface
 {
     /**
-     * Returns the total items that were filtered.
+     * Returns the total items after filter.
      *
      * @return integer
      */
@@ -31,6 +32,15 @@ interface SourceInterface
      * @return integer
      */
     public function getTotal();
+
+    /**
+     * Sets the payload to be used in the source.
+     *
+     * @param \Rougin\Datatables\Request $request
+     *
+     * @return self
+     */
+    public function setRequest(Request $request);
 
     /**
      * Sets the table to be used in the source.

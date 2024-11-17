@@ -68,21 +68,22 @@ class Table
      */
     public function getName()
     {
-        return $this->table;
+        return $this->name;
     }
 
     /**
-     * @param string $name
+     * @param integer $index
+     * @param string  $name
      *
      * @return self
      */
-    public function newColumn($name)
+    public function mapColumn($index, $name)
     {
-        $column = new Column;
+        $column = $this->columns[$index];
 
-        $column->setName($name);
+        $this->columns[$index] = $column->setName($name);
 
-        return $this->addColumn($column);
+        return $this;
     }
 
     /**

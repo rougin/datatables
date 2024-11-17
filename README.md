@@ -63,7 +63,7 @@ $table = Table::fromRequest($request);
 // --------------------------------------
 ```
 
-By default, getting columns from the payload of the Javascript part of `DataTables` does provide its name. As the column name is required for getting its data from a source, there is a need to map its column to the database table:
+By default, getting columns from the payload of the Javascript part of `DataTables` does not provide its name (e.g., `forename`, `surname`, etc.). As the column name is required for getting its data from a source, there is a need to map its column to the database table:
 
 ``` php
 // index.php
@@ -72,7 +72,10 @@ By default, getting columns from the payload of the Javascript part of `DataTabl
 
 $table->setName('users');
 
+// The first column will be named as "forename" ---
 $table->mapColumn(0, 'forename');
+// ------------------------------------------------
+
 $table->mapColumn(1, 'surname');
 $table->mapColumn(2, 'position');
 $table->mapColumn(3, 'office');
@@ -83,27 +86,47 @@ $table->mapColumn(5, 'salary');
 
 ```
 
-Once the table has been properly configured, use the `Query` class and the `Request` class to generate the requested data to the table: 
+Once the table has been properly configured, initialize a source (e.g., `PdoSource`) that will be used for getting the data of the specified table:
 
 ``` php
 // index.php
 
-use Rougin\Datatables\Request;
+use Rougin\Datatables\Source\PdoSource;
+
+// ...
+
+// Create a PDO instance... --------------
+$dsn = 'mysql:host=localhost;dbname=demo';
+
+$pdo = new PDO($dsn, 'root', /** ... */);
+// ---------------------------------------
+
+// ...then pass it to the PdoSource ---
+$source = new PdoSource($pdo);
+// ------------------------------------
+
+// ...
+```
+
+Then use the `Query` class to generate the requested data: 
+
+``` php
+// index.php
+
 use Rougin\Datatables\Query;
 
 // ...
 
-// Parse the data from the query params ---
-$request = new Request($params);
-// ----------------------------------------
+/** @var \Rougin\Datatables\Source\SourceInterface */
+$source = /** ... */;
 
-$query = new Query($request);
+$query = new Query($request, $source);
 
 /** @var \Rougin\Datatables\Result */
 $result = $query->getResult($table);
 ```
 
-Once the parsed from `Query`, it will be returned as `Result` class in which returns the response as an array or as JSON:
+The `getResult` from the `Query` class will return as the `Result` class in which returns the response as an array or as JSON format:
 
 ``` php
 // index.php
@@ -111,7 +134,7 @@ Once the parsed from `Query`, it will be returned as `Result` class in which ret
 // ...
 
 /** @var \Rougin\Datatables\Result */
-$result = $query->parse($table);
+$result = $query->getResult($table);
 
 echo $result->toJson();
 ```
@@ -122,33 +145,82 @@ $ php index.php
 
 ``` json
 {
-  "draw": 2,
-  "recordsFiltered": 0,
-  "recordsTotal": 0,
-  "data": []
+  "draw": 1,
+  "recordsFiltered": 57,
+  "recordsTotal": 57,
+  "data":
+  [
+    [
+      "Airi",
+      "Satou",
+      "Accountant",
+      "Tokyo",
+      "2008-11-28",
+      "162700.0"
+    ],
+    [
+      "Angelica",
+      "Ramos",
+      "Chief Executive Officer (CEO)",
+      "London",
+      "2009-10-09",
+      "1200000.0"
+    ]
+  ]
 }
 ```
 
-To provide data from a specified source (e.g., from database), kindly use the `setSource` method from the `Query` class:
+## Creating custom sources
+
+To create a custom source, kindly use the `SourceInterface` for its implementation:
 
 ``` php
-// index.php
+namespace Rougin\Datatables\Source;
 
-use Acme\Sources\ModelSource;
-use Acme\Models\User;
-use Rougin\Datatables\Source;
+use Rougin\Datatables\Request;
+use Rougin\Datatables\Table;
 
-// ...
+interface SourceInterface
+{
+    /**
+     * Returns the total items after filter.
+     *
+     * @return integer
+     */
+    public function getFiltered();
 
-/** @var \Rougin\Datatables\Query */
-$query = /** ... */;
+    /**
+     * Returns the items from the source.
+     *
+     * @return string[][]
+     */
+    public function getItems();
 
-/** @var \Rougin\Datatables\Source\SourceInterface */
-$source = new ModelSource(new User);
+    /**
+     * Returns the total items from the source.
+     *
+     * @return integer
+     */
+    public function getTotal();
 
-$query->setSource($source);
+    /**
+     * Sets the payload to be used in the source.
+     *
+     * @param \Rougin\Datatables\Request $request
+     *
+     * @return self
+     */
+    public function setRequest(Request $request);
 
-// ...
+    /**
+     * Sets the table to be used in the source.
+     *
+     * @param \Rougin\Datatables\Table $table
+     *
+     * @return self
+     */
+    public function setTable(Table $table);
+}
 ```
 
 ## Changelog

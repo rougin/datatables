@@ -57,9 +57,16 @@ class Request
                 $row->setName($name);
             }
 
-            /** @var integer */
-            $index = $item['data'];
-            $row->setIndex($index);
+            /** @var string */
+            $data = $item['data'];
+            $row->setData($data);
+
+            // It may be a column name ---
+            if (! is_numeric($data))
+            {
+                $row->setName($data);
+            }
+            // ---------------------------
 
             $searchable = $item['searchable'] === 'true';
             $row->setSearchable($searchable);
