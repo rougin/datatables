@@ -48,33 +48,14 @@ class PdoSource implements SourceInterface
     }
 
     /**
-     * TODO: If no filters, the value should be same with getTotal.
-     *
-     * Returns the total items after filter.
+     * Returns the total items after filter. If no filters
+     * are defined, the value should be same with getTotal.
      *
      * @return integer
      */
     public function getFiltered()
     {
-        // Reset values prior creating query ---
-        $this->values = array();
-        // -------------------------------------
-
-        $table = $this->table->getName() . ' ';
-
-        $query = 'SELECT COUNT(*) FROM ' . $table;
-
-        $query .= $this->setWhereQuery() . ' ';
-
-        /** @var \PDOStatement */
-        $stmt = $this->pdo->prepare($query);
-
-        $stmt->execute($this->values);
-
-        /** @var integer */
-        $total = $stmt->fetch(\PDO::FETCH_COLUMN);
-
-        return (int) $total;
+        return $this->getTotalItems(true);
     }
 
     /**
@@ -137,27 +118,13 @@ class PdoSource implements SourceInterface
     }
 
     /**
-     * TODO: Merge logic with getFiltered.
-     *
      * Returns the total items from the source.
      *
      * @return integer
      */
     public function getTotal()
     {
-        $table = $this->table->getName();
-
-        $query = 'SELECT COUNT(*) FROM ' . $table;
-
-        /** @var \PDOStatement */
-        $stmt = $this->pdo->prepare($query);
-
-        $stmt->execute();
-
-        /** @var integer */
-        $total = $stmt->fetch(\PDO::FETCH_COLUMN);
-
-        return (int) $total;
+        return $this->getTotalItems();
     }
 
     /**
@@ -186,6 +153,37 @@ class PdoSource implements SourceInterface
         $this->table = $table;
 
         return $this;
+    }
+
+    /**
+     * @param boolean $filter
+     *
+     * @return integer
+     */
+    protected function getTotalItems($filter = false)
+    {
+        // Reset values prior creating query ---
+        $this->values = array();
+        // -------------------------------------
+
+        $table = $this->table->getName() . ' ';
+
+        $query = 'SELECT COUNT(*) FROM ' . $table;
+
+        if ($filter)
+        {
+            $query .= $this->setWhereQuery() . ' ';
+        }
+
+        /** @var \PDOStatement */
+        $stmt = $this->pdo->prepare(trim($query));
+
+        $stmt->execute($this->values);
+
+        /** @var integer */
+        $total = $stmt->fetch(\PDO::FETCH_COLUMN);
+
+        return (int) $total;
     }
 
     /**

@@ -13,7 +13,8 @@ use Rougin\Datatables\Table;
 interface SourceInterface
 {
     /**
-     * Returns the total items after filter.
+     * Returns the total items after filter. If no filters
+     * are defined, the value should be same with getTotal.
      *
      * @return integer
      */
