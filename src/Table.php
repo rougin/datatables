@@ -26,7 +26,7 @@ class Table
 
     /**
      * @param \Rougin\Datatables\Request $request
-     * @param string                     $name
+     * @param string|null                $name
      *
      * @return self
      */

@@ -203,14 +203,14 @@ class PdoSourceTest extends Testcase
     }
 
     /**
-     * @param string                     $name
      * @param \Rougin\Datatables\Request $request
+     * @param string|null                $name
      *
      * @return \Rougin\Datatables\Table
      */
-    protected function setTable($name, Request $request)
+    protected function setTable(Request $request, $name = null)
     {
-        $table = Table::fromRequest($name, $request);
+        $table = Table::fromRequest($request, $name);
 
         $table->mapColumn(0, 'forename');
         $table->mapColumn(1, 'surname');
