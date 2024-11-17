@@ -58,9 +58,9 @@ use Rougin\Datatables\Table;
 $request = new Request($_GET);
 // -----------------------------------------
 
-// Parse columns based on the Request ---
-$table = Table::fromRequest($request);
-// --------------------------------------
+// Parse columns based on the Request ---------
+$table = Table::fromRequest($request, 'users');
+// --------------------------------------------
 ```
 
 By default, getting columns from the payload of the Javascript part of `DataTables` does not provide its name (e.g., `forename`, `surname`, etc.). As the column name is required for getting its data from a source, there is a need to map its column to the database table:
@@ -69,8 +69,6 @@ By default, getting columns from the payload of the Javascript part of `DataTabl
 // index.php
 
 // ...
-
-$table->setName('users');
 
 // The first column will be named as "forename" ---
 $table->mapColumn(0, 'forename');
@@ -126,7 +124,7 @@ $query = new Query($request, $source);
 $result = $query->getResult($table);
 ```
 
-The `getResult` from the `Query` class will return as the `Result` class in which returns the response as an array or as JSON format:
+The `getResult` from the `Query` class returns a `Result` class in which returns the response as an array or as JSON format:
 
 ``` php
 // index.php
@@ -165,7 +163,9 @@ $ php index.php
       "London",
       "2009-10-09",
       "1200000.0"
-    ]
+    ],
+
+    // ...
   ]
 }
 ```

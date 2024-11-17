@@ -25,12 +25,12 @@ class Table
     protected $table;
 
     /**
-     * @param string                     $name
      * @param \Rougin\Datatables\Request $request
+     * @param string                     $name
      *
      * @return self
      */
-    public static function fromRequest($name, Request $request)
+    public static function fromRequest(Request $request, $name = null)
     {
         $table = new Table;
 
@@ -41,7 +41,12 @@ class Table
             $table->addColumn($column);
         }
 
-        return $table->setName($name);
+        if ($name)
+        {
+            $table->setName($name);
+        }
+
+        return $table;
     }
 
     /**

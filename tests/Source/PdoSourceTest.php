@@ -48,7 +48,7 @@ class PdoSourceTest extends Testcase
 
         $request = Params::columnNames();
 
-        $table = Table::fromRequest('users', $request);
+        $table = Table::fromRequest($request, 'users');
 
         $query = new Query($request, $this->source);
 
@@ -76,7 +76,7 @@ class PdoSourceTest extends Testcase
 
         $request = Params::fewColumns();
 
-        $table = Table::fromRequest('users', $request);
+        $table = Table::fromRequest($request, 'users');
 
         $query = new Query($request, $this->source);
 
@@ -104,7 +104,7 @@ class PdoSourceTest extends Testcase
 
         $request = Params::globalAndColumnSearch();
 
-        $table = $this->setTable('users', $request);
+        $table = $this->setTable($request, 'users');
 
         $query = new Query($request, $this->source);
 
@@ -132,7 +132,7 @@ class PdoSourceTest extends Testcase
 
         $request = Params::globalSearch();
 
-        $table = $this->setTable('users', $request);
+        $table = $this->setTable($request, 'users');
 
         $query = new Query($request, $this->source);
 
@@ -160,7 +160,7 @@ class PdoSourceTest extends Testcase
 
         $request = Params::initialData();
 
-        $table = $this->setTable('users', $request);
+        $table = $this->setTable($request, 'users');
 
         $query = new Query($request, $this->source);
 
@@ -188,7 +188,7 @@ class PdoSourceTest extends Testcase
 
         $request = Params::searchColumn();
 
-        $table = $this->setTable('users', $request);
+        $table = $this->setTable($request, 'users');
 
         $query = new Query($request, $this->source);
 
