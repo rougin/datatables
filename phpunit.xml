@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit bootstrap="vendor/autoload.php" colors="true">
+  <testsuites>
+    <testsuite name="Datatables Test Suite">
+      <directory>tests</directory>
+    </testsuite>
+  </testsuites>
+  <coverage>
+    <include>
+      <directory suffix=".php">src</directory>
+    </include>
+    <report>
+      <clover outputFile="build/logs/clover.xml"/>
+      <html outputDirectory="build/coverage"/>
+      <text outputFile="build/coverage.txt"/>
+    </report>
+  </coverage>
+  <php>
+    <env name="APP_ENV" value="testing"/>
+    <env name="DB_CONNECTION" value="sqlite"/>
+    <env name="DB_DATABASE" value=":memory:"/>
+  </php>
+</phpunit>
