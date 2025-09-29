@@ -3,6 +3,7 @@
 namespace Rougin\Datatables\Source;
 
 use Rougin\Datatables\Fixture\Params;
+use Rougin\Datatables\Fixture\UserLoader;
 use Rougin\Datatables\Query;
 use Rougin\Datatables\Request;
 use Rougin\Datatables\Table;
@@ -19,20 +20,6 @@ class PdoSourceTest extends Testcase
      * @var \Rougin\Datatables\Source\SourceInterface
      */
     protected $source;
-
-    /**
-     * @return void
-     */
-    public function doSetUp()
-    {
-        $path = __DIR__ . '/../Fixture';
-
-        $file = $path . '/Storage/dtbl.s3db';
-
-        $pdo = new \PDO('sqlite:' . $file);
-
-        $this->source = new PdoSource($pdo);
-    }
 
     /**
      * @return void
@@ -200,6 +187,18 @@ class PdoSourceTest extends Testcase
         // --------------------------------------------
 
         $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * @return void
+     */
+    protected function doSetUp()
+    {
+        $user = new UserLoader;
+
+        $pdo = $user->getPdo();
+
+        $this->source = new PdoSource($pdo);
     }
 
     /**
