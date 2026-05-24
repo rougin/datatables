@@ -42,6 +42,28 @@ class ColumnTest extends Testcase
     /**
      * @return void
      */
+    public function test_passed_if_formatter_can_be_set_and_got()
+    {
+        $column = new Column;
+
+        $column->setFormatter('strtoupper');
+
+        $this->assertEquals('strtoupper', $column->getFormatter());
+    }
+
+    /**
+     * @return void
+     */
+    public function test_passed_if_formatter_is_null_by_default()
+    {
+        $column = new Column;
+
+        $this->assertNull($column->getFormatter());
+    }
+
+    /**
+     * @return void
+     */
     public function test_passed_if_name_can_be_set_and_got()
     {
         $column = new Column;

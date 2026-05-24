@@ -15,6 +15,11 @@ class Column
     protected $data;
 
     /**
+     * @var callable|null
+     */
+    protected $formatter = null;
+
+    /**
      * @var string|null
      */
     protected $name = null;
@@ -33,6 +38,14 @@ class Column
      * @var boolean
      */
     protected $searchable = false;
+
+    /**
+     * @return callable|null
+     */
+    public function getFormatter()
+    {
+        return $this->formatter;
+    }
 
     /**
      * @return string|null
@@ -74,6 +87,18 @@ class Column
     public function setData($data)
     {
         $this->data = $data;
+
+        return $this;
+    }
+
+    /**
+     * @param callable $formatter
+     *
+     * @return self
+     */
+    public function setFormatter($formatter)
+    {
+        $this->formatter = $formatter;
 
         return $this;
     }

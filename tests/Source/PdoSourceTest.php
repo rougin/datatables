@@ -143,6 +143,82 @@ class PdoSourceTest extends Testcase
     /**
      * @return void
      */
+    public function test_passed_if_formatter_receives_full_row_data()
+    {
+        $expected = $this->getJsonLines(array('draw' => 1, 'filtered' => 57, 'total' => 57), array(
+            array('Airi Satou', 'Satou', 'Accountant', 'Tokyo', '2008-11-28', '162700.0'),
+            array('Angelica Ramos', 'Ramos', 'Chief Executive Officer (CEO)', 'London', '2009-10-09', '1200000.0'),
+            array('Ashton Cox', 'Cox', 'Junior Technical Author', 'San Francisco', '2009-01-12', '86000.0'),
+            array('Bradley Greer', 'Greer', 'Software Engineer', 'London', '2012-10-13', '132000.0'),
+            array('Brenden Wagner', 'Wagner', 'Software Engineer', 'San Francisco', '2011-06-07', '206850.0'),
+            array('Brielle Williamson', 'Williamson', 'Integration Specialist', 'New York', '2012-12-02', '372000.0'),
+            array('Bruno Nash', 'Nash', 'Software Engineer', 'London', '2011-05-03', '163500.0'),
+            array('Caesar Vance', 'Vance', 'Pre-Sales Support', 'New York', '2011-12-12', '106450.0'),
+            array('Cara Stevens', 'Stevens', 'Sales Assistant', 'New York', '2011-12-06', '145600.0'),
+            array('Cedric Kelly', 'Kelly', 'Senior Javascript Developer', 'Edinburgh', '2012-03-29', '433060.0'),
+        ));
+
+        $request = Params::initialData();
+
+        $table = $this->setTable($request, 'users');
+
+        $columns = $table->getColumns();
+
+        $columns[0]->setFormatter(function ($value, $row)
+        {
+            return $value . ' ' . $row['surname'];
+        });
+
+        $query = new Query($request, $this->source);
+
+        $json = $query->getResult($table)->toJson();
+
+        $json = str_replace('.0"', '"', $json);
+
+        $this->assertEquals($expected, $json);
+    }
+
+    /**
+     * @return void
+     */
+    public function test_passed_if_formatter_transforms_column_value()
+    {
+        $expected = $this->getJsonLines(array('draw' => 1, 'filtered' => 57, 'total' => 57), array(
+            array('AIRI', 'Satou', 'Accountant', 'Tokyo', '2008-11-28', '162700.0'),
+            array('ANGELICA', 'Ramos', 'Chief Executive Officer (CEO)', 'London', '2009-10-09', '1200000.0'),
+            array('ASHTON', 'Cox', 'Junior Technical Author', 'San Francisco', '2009-01-12', '86000.0'),
+            array('BRADLEY', 'Greer', 'Software Engineer', 'London', '2012-10-13', '132000.0'),
+            array('BRENDEN', 'Wagner', 'Software Engineer', 'San Francisco', '2011-06-07', '206850.0'),
+            array('BRIELLE', 'Williamson', 'Integration Specialist', 'New York', '2012-12-02', '372000.0'),
+            array('BRUNO', 'Nash', 'Software Engineer', 'London', '2011-05-03', '163500.0'),
+            array('CAESAR', 'Vance', 'Pre-Sales Support', 'New York', '2011-12-12', '106450.0'),
+            array('CARA', 'Stevens', 'Sales Assistant', 'New York', '2011-12-06', '145600.0'),
+            array('CEDRIC', 'Kelly', 'Senior Javascript Developer', 'Edinburgh', '2012-03-29', '433060.0'),
+        ));
+
+        $request = Params::initialData();
+
+        $table = $this->setTable($request, 'users');
+
+        $columns = $table->getColumns();
+
+        $columns[0]->setFormatter(function ($value)
+        {
+            return strtoupper($value);
+        });
+
+        $query = new Query($request, $this->source);
+
+        $json = $query->getResult($table)->toJson();
+
+        $json = str_replace('.0"', '"', $json);
+
+        $this->assertEquals($expected, $json);
+    }
+
+    /**
+     * @return void
+     */
     public function test_passed_if_global_and_column_search_combined()
     {
         $expected = '{"draw":6,"recordsFiltered":3,"recordsTotal":57,"data":[["Airi","Satou","Accountant","Tokyo","2008-11-28","162700.0"],["Garrett","Winters","Accountant","Tokyo","2011-07-25","170750.0"],["Jackson","Bradshaw","Director","New York","2008-09-26","645750.0"]]}';

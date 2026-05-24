@@ -170,6 +170,38 @@ $ php index.php
 }
 ```
 
+## Column formatters
+
+Each table column accepts an optional formatter callback to transform values before output, matching the [SSP formatter contract](https://datatables.net/examples/data_sources/server_side.html):
+
+``` php
+// index.php
+
+// ...
+
+// Get the columns from the table ---
+$columns = $table->getColumns();
+// ----------------------------------
+
+// Format salary as currency --------------
+$columns[5]->setFormatter(function ($value)
+{
+    return '$' . number_format($value, 2);
+});
+// ----------------------------------------
+
+// Compose full name from two fields -----
+$fn = function ($value, $row)
+{
+    return $value . ' ' . $row['surname'];
+};
+
+$columns[0]->setFormatter($fn);
+// ---------------------------------------
+
+// ...
+```
+
 ## Creating custom sources
 
 To create a custom source, kindly use the `SourceInterface` for its implementation:

@@ -93,12 +93,17 @@ class PdoSource implements SourceInterface
                     continue;
                 }
 
-                // TODO: Allow to convert columns with a data type ----
-                // ----------------------------------------------------
-
                 // PHP 8.0 and above parses numbers as native types ---
                 // as opposed to pure strings prior to this version ---
                 $value = $item[$name];
+
+                if ($formatter = $column->getFormatter())
+                {
+                    $data = array($value, $item);
+
+                    /** @var mixed */
+                    $value = call_user_func_array($formatter, $data);
+                }
 
                 $row[] = is_scalar($value) ? strval($value) : '';
                 // ----------------------------------------------------
@@ -167,13 +172,8 @@ class PdoSource implements SourceInterface
 
         $result = new Result($this->pdo);
 
-        /** @var array<string, mixed>|false */
+        /** @var array<string, mixed> */
         $row = $result->first($query);
-
-        if (! $row)
-        {
-            return 0;
-        }
 
         $count = $row['c'];
 
