@@ -1,6 +1,6 @@
 {
   "name": "rougin/datatables",
-  "description": "Handles server-side of DataTables in PHP.",
+  "description": "Server-side of DataTables.net in PHP.",
   "keywords": [ "datatable", "php-datatables", "php-table" ],
   "homepage": "https://roug.in/datatables/",
   "license": "MIT",
@@ -16,7 +16,7 @@
   "require":
   {
     "php": ">=5.3.0",
-    "rougin/ezekiel": "dev-master"
+    "rougin/ezekiel": "~0.1"
   },
   "autoload":
   {
@@ -35,8 +35,7 @@
   "require-dev":
   {
     "phpunit/phpunit": "*",
-    "sanmai/phpunit-legacy-adapter": "*",
-    "robmorgan/phinx": "~0.1"
+    "sanmai/phpunit-legacy-adapter": "*"
   },
   "scripts":
   {
