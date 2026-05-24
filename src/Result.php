@@ -120,19 +120,23 @@ class Result
      */
     public function toArray()
     {
-        $draw = (int) $this->getDraw();
-        $result = array('draw' => $draw);
+        $draw = $this->getDraw();
+
+        $item = array('draw' => $draw);
 
         $filter = $this->getFiltered();
-        $result['recordsFiltered'] = $filter;
+
+        $item['recordsFiltered'] = $filter;
 
         $total = $this->getTotal();
-        $result['recordsTotal'] = $total;
+
+        $item['recordsTotal'] = $total;
 
         $items = $this->getItems();
-        $result['data'] = $items;
 
-        return $result;
+        $item['data'] = $items;
+
+        return $item;
     }
 
     /**
@@ -140,7 +144,8 @@ class Result
      */
     public function toJson()
     {
-        /** @var string */
-        return json_encode($this->toArray());
+        $json = json_encode($this->toArray());
+
+        return is_string($json) ? $json : '{}';
     }
 }

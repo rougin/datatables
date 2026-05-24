@@ -398,13 +398,18 @@ class PdoSourceTest extends Testcase
      */
     protected function getJsonLines($meta, $data)
     {
+        /** @var integer $draw */
         $draw = $meta['draw'];
 
+        /** @var integer $filtered */
         $filtered = $meta['filtered'];
 
+        /** @var integer $total */
         $total = $meta['total'];
 
         $items = json_encode($data);
+
+        $items = is_string($items) ? $items : '[]';
 
         $items = str_replace('.0"', '"', $items);
 

@@ -10,7 +10,7 @@ namespace Rougin\Datatables;
 class Request
 {
     /**
-     * @var array<string, mixed>
+     * @var array<integer|string, mixed>
      */
     protected $data = array();
 
@@ -23,12 +23,11 @@ class Request
     {
         parse_str($string, $data);
 
-        /** @var array<string, mixed> $data */
         return new Request($data);
     }
 
     /**
-     * @param array<string, mixed> $data
+     * @param array<integer|string, mixed> $data
      */
     public function __construct($data = array())
     {
@@ -51,31 +50,49 @@ class Request
 
             /** @var string|null */
             $name = $item['name'];
-            $row = $name ? $row->setName($name) : $row;
 
-            /** @var string */
-            $data = $item['data'];
-            $row->setData($data);
+            if ($name)
+            {
+                $row->setName($name);
+            }
 
             // It may be a column name ---
+            /** @var string */
+            $data = $item['data'];
+
+            $row->setData($data);
+
             if (! is_numeric($data))
             {
                 $row->setName($data);
             }
             // ---------------------------
 
-            $searchable = $item['searchable'] === 'true';
-            $row->setSearchable($searchable);
+            // Set if column is searchable ---------
+            $value = $item['searchable'] === 'true';
 
-            $orderable = $item['orderable'] === 'true';
-            $row->setOrderable($orderable);
+            $row->setSearchable($value);
+            // -------------------------------------
 
-            // Specify the search parameters --------
-            /** @var array<string, mixed> */
-            $data = $item['search'];
+            // Set if column is orderable ---------
+            $value = $item['orderable'] === 'true';
 
-            $row->setSearch($this->setSearch($data));
-            // --------------------------------------
+            $row->setOrderable($value);
+            // ------------------------------------
+
+            // Specify the search parameters ---
+            $data = array();
+
+            if (isset($item['search']))
+            {
+                /** @var array<string, mixed> */
+                $data = $item['search'];
+            }
+
+            $search = $this->setSearch($data);
+
+            $row->setSearch($search);
+            // ---------------------------------
 
             $result[] = $row;
         }
@@ -119,22 +136,29 @@ class Request
         {
             $new = new Order;
 
-            /** @var integer */
-            $index = $item['column'];
-            $new->setIndex($index);
-
-            // Specify if direction is ascending or descending ---------
-            /** @var string */
-            $dir = $item['dir'];
-
-            $sort = $dir === 'asc' ? Order::SORT_ASC : Order::SORT_DESC;
-
-            $new->setSort($sort);
-            // ---------------------------------------------------------
-
+            // Set column name to order with ----------
             /** @var string|null */
             $name = $item['name'];
+
             $new = $name ? $new->setName($name) : $new;
+            // ----------------------------------------
+
+            // Set order index ------
+            /** @var integer */
+            $index = $item['column'];
+
+            $new->setIndex($index);
+            // ----------------------
+
+            // Specify if direction of the order ----
+            $isAsc = $item['dir'] === 'asc';
+
+            $sort = Order::SORT_DESC;
+
+            $sort = $isAsc ? Order::SORT_ASC : $sort;
+
+            $new->setSort($sort);
+            // --------------------------------------
 
             $result[] = $new;
         }
@@ -173,16 +197,20 @@ class Request
     {
         $search = new Search;
 
-        /** @var string|null */
-        $value = $data['value'];
-
-        if ($value)
+        if (isset($data['regex']))
         {
-            $search->setValue($value);
+            $regex = $data['regex'] === 'true';
+
+            $search->setRegex($regex);
         }
 
-        $regex = $data['regex'] === 'true';
-        $search->setRegex($regex);
+        if (isset($data['value']))
+        {
+            /** @var string */
+            $value = $data['value'];
+
+            $search->setValue($value);
+        }
 
         return $search;
     }

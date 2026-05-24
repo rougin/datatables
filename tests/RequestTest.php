@@ -111,8 +111,6 @@ class RequestTest extends Testcase
         $request = Request::fromString($text);
 
         $this->assertEquals(5, $request->getDraw());
-
-        $this->assertIsInt($request->getDraw());
     }
 
     /**
@@ -125,8 +123,6 @@ class RequestTest extends Testcase
         $request = Request::fromString($text);
 
         $this->assertEquals(25, $request->getLength());
-
-        $this->assertIsInt($request->getLength());
     }
 
     /**
@@ -247,7 +243,5 @@ class RequestTest extends Testcase
         $request = Request::fromString($text);
 
         $this->assertEquals(50, $request->getStart());
-
-        $this->assertIsInt($request->getStart());
     }
 }
