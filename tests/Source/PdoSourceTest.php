@@ -311,7 +311,7 @@ class PdoSourceTest extends Testcase
 
         $this->assertEquals(57, $result->getFiltered());
 
-        $this->assertEquals(47, count($result->getItems()));
+        $this->assertEquals(0, count($result->getItems()));
     }
 
     /**

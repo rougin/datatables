@@ -4,6 +4,8 @@ namespace Rougin\Datatables\Source;
 
 use Rougin\Datatables\Request;
 use Rougin\Datatables\Table;
+use Rougin\Ezekiel\Query;
+use Rougin\Ezekiel\Result;
 
 /**
  * @package Datatables
@@ -12,11 +14,6 @@ use Rougin\Datatables\Table;
  */
 class PdoSource implements SourceInterface
 {
-    /**
-     * @var string[][]
-     */
-    protected $items = array();
-
     /**
      * @var \PDO
      */
@@ -33,16 +30,15 @@ class PdoSource implements SourceInterface
     protected $table;
 
     /**
-     * @var mixed[]
-     */
-    protected $values = array();
-
-    /**
      * @param \PDO $pdo
      */
     public function __construct(\PDO $pdo)
     {
-        $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+        $value = \PDO::ERRMODE_EXCEPTION;
+
+        $name = \PDO::ATTR_ERRMODE;
+
+        $pdo->setAttribute($name, $value);
 
         $this->pdo = $pdo;
     }
@@ -65,27 +61,22 @@ class PdoSource implements SourceInterface
      */
     public function getItems()
     {
-        // Reset values prior creating query ---
-        $this->values = array();
-        // -------------------------------------
+        $query = new Query;
 
-        $table = $this->table->getName() . ' ';
+        $query->select('*')->from($this->table->getName());
 
-        $query = 'SELECT * FROM ' . $table;
+        $this->addWhere($query);
 
-        $query .= $this->setWhereQuery() . ' ';
-        $query .= $this->setOrderQuery() . ' ';
-        $query .= $this->setLimitQuery() . ' ';
+        $this->addOrder($query);
 
-        /** @var \PDOStatement */
-        $stmt = $this->pdo->prepare($query);
+        $this->addLimit($query);
 
-        $stmt->execute($this->values);
+        $result = new Result($this->pdo);
 
-        /** @var array<string, string>[] */
-        $items = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        /** @var array<string, mixed>[] */
+        $items = $result->items($query);
 
-        $result = array();
+        $out = array();
 
         $columns = $this->table->getColumns();
 
@@ -107,14 +98,16 @@ class PdoSource implements SourceInterface
 
                 // PHP 8.0 and above parses numbers as native types ---
                 // as opposed to pure strings prior to this version ---
-                $row[] = (string) $item[$name];
+                $value = $item[$name];
+
+                $row[] = is_scalar($value) ? strval($value) : '';
                 // ----------------------------------------------------
             }
 
-            $result[] = $row;
+            $out[] = $row;
         }
 
-        return $result;
+        return $out;
     }
 
     /**
@@ -162,92 +155,113 @@ class PdoSource implements SourceInterface
      */
     protected function getTotalItems($filter = false)
     {
-        // Reset values prior creating query ---
-        $this->values = array();
-        // -------------------------------------
+        $query = new Query;
 
-        $table = $this->table->getName() . ' ';
-
-        $query = 'SELECT COUNT(*) FROM ' . $table;
+        $query->select('COUNT(*) as c')
+            ->from($this->table->getName());
 
         if ($filter)
         {
-            $query .= $this->setWhereQuery() . ' ';
+            $this->addWhere($query);
         }
 
-        /** @var \PDOStatement */
-        $stmt = $this->pdo->prepare(trim($query));
+        $result = new Result($this->pdo);
 
-        $stmt->execute($this->values);
+        /** @var array<string, mixed>|false */
+        $row = $result->first($query);
 
-        /** @var integer */
-        $total = $stmt->fetch(\PDO::FETCH_COLUMN);
+        if (! $row)
+        {
+            return 0;
+        }
 
-        return (int) $total;
+        $count = $row['c'];
+
+        return is_scalar($count) ? intval($count) : 0;
     }
 
     /**
-     * @return string
+     * @param \Rougin\Ezekiel\Query $query
+     *
+     * @return void
      */
-    protected function setLimitQuery()
+    protected function addLimit(Query $query)
     {
-        $limit = 'LIMIT ' . $this->request->getLength();
+        $length = $this->request->getLength();
+
+        if ($length === -1)
+        {
+            return;
+        }
 
         $start = $this->request->getStart();
 
-        return $start ? $limit . ', ' . $start : $limit;
+        $query->limit($length, $start);
     }
 
     /**
-     * @return string
+     * @param \Rougin\Ezekiel\Query $query
+     *
+     * @return void
      */
-    protected function setOrderQuery()
+    protected function addOrder(Query $query)
     {
-        $query = '';
-
         $columns = $this->table->getColumns();
 
         $orders = $this->request->getOrders();
 
-        $items = array();
+        $first = true;
 
         foreach ($orders as $order)
         {
-            $column = $columns[$order->getIndex()];
+            $index = $order->getIndex();
+
+            $column = $columns[$index];
 
             $name = $column->getName();
 
-            if ($column->isOrderable())
+            if (! $name || ! $column->isOrderable())
             {
-                $sort = $order->isAscending() ? 'ASC' : '';
+                continue;
+            }
 
-                $sort = $order->isDescending() ? 'DESC' : $sort;
+            if ($first)
+            {
+                $builder = $query->orderBy($name);
 
-                $items[] = '`' . $name . '` ' . $sort;
+                $first = false;
+            }
+            else
+            {
+                $builder = $query->andOrderBy($name);
+            }
+
+            if ($order->isAscending())
+            {
+                $builder->asc();
+            }
+            else
+            {
+                $builder->desc();
             }
         }
-
-        if (count($items) > 0)
-        {
-            $query = 'ORDER BY ' . implode(', ', $items);
-        }
-
-        return $query;
     }
 
     /**
-     * @return string
+     * @param \Rougin\Ezekiel\Query $query
+     *
+     * @return void
      */
-    protected function setWhereQuery()
+    protected function addWhere(Query $query)
     {
         $columns = $this->table->getColumns();
 
         $search = $this->request->getSearch();
 
-        // Do a global search for each column -------
-        $global = array();
-
         $value = $search->getValue();
+
+        // Do a global search for each column --------------
+        $global = array();
 
         foreach ($columns as $item)
         {
@@ -263,54 +277,51 @@ class PdoSource implements SourceInterface
                 continue;
             }
 
-            $this->values[] = '%' . $value . '%';
-
-            $global[] = '`' . $name . '` LIKE ?';
+            $global[] = $name;
         }
-        // ------------------------------------------
 
-        // TODO: Do a search per specified column ---
-        $items = array();
+        if (count($global) > 0)
+        {
+            $fn = function (Query $q) use ($global, $value)
+            {
+                $first = array_shift($global);
 
+                $q->where($first)->like('%' . $value . '%');
+
+                foreach ($global as $name)
+                {
+                    $q->orWhere($name)
+                        ->like('%' . $value . '%');
+                }
+            };
+
+            $query->whereGroup($fn);
+        }
+        // -------------------------------------------------
+
+        // Do a search per specified column ---
         foreach ($columns as $item)
         {
             $name = $item->getName();
 
-            $search = $item->getSearch();
-
-            if (! $value = $search->getValue())
+            if (! $name)
             {
                 continue;
             }
 
-            $this->values[] = '%' . $value . '%';
+            $colSearch = $item->getSearch();
 
-            $items[] = '`' . $name . '` LIKE ?';
-        }
-        // ------------------------------------------
+            $colValue = $colSearch->getValue();
 
-        $query = '';
-
-        if (count($global) > 0)
-        {
-            $query = '(' . implode(' OR ', $global) . ')';
-        }
-
-        if (count($items) > 0)
-        {
-            if ($query !== '')
+            if (! $colValue)
             {
-                $query .= ' AND ';
+                continue;
             }
 
-            $query .= implode(' AND ', $items);
+            $query->where($name)
+                ->like('%' . $colValue . '%');
         }
-
-        if ($query !== '')
-        {
-            $query = 'WHERE ' . $query;
-        }
-
-        return $query;
+        // ------------------------------------
     }
+
 }
