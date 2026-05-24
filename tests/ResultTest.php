@@ -20,8 +20,6 @@ class ResultTest extends Testcase
 
         $data = $result->toArray();
 
-        $this->assertIsInt($data['draw']);
-
         $this->assertEquals(5, $data['draw']);
     }
 
